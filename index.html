@@ -281,6 +281,15 @@
         <div class="ml-2">C#5–F#5: <span class="font-mono">1 2 3</span></div>
       </div>
     </div>
+    <!-- Self-playing button -->
+    <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 select-none">
+      <button
+        id="self-play-btn"
+        class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60"
+      >
+        Self Playing
+      </button>
+    </div>
     <script>
       // Ensure Tone.js is loaded and ready
       window.onload = function () {
@@ -654,6 +663,98 @@
           ) {
             infoOverlay.classList.add("hidden");
             infoBtn.classList.remove("bg-white/40");
+          }
+        });
+
+        // Self-playing logic
+        const selfPlayBtn = document.getElementById("self-play-btn");
+        let selfPlaying = false;
+        let selfPlayTimeouts = [];
+        // Example melody (C major scale up and down)
+        const selfPlayNotes = [
+          "C4",
+          "C4",
+          "G4",
+          "G4",
+          "A4",
+          "A4",
+          "G4",
+          "F4",
+          "F4",
+          "E4",
+          "E4",
+          "D4",
+          "D4",
+          "C4",
+          "G4",
+          "G4",
+          "F4",
+          "F4",
+          "E4",
+          "E4",
+          "D4",
+          "G4",
+          "G4",
+          "F4",
+          "F4",
+          "E4",
+          "E4",
+          "D4",
+          "C4",
+          "C4",
+          "G4",
+          "G4",
+          "A4",
+          "A4",
+          "G4",
+          "F4",
+          "F4",
+          "E4",
+          "E4",
+          "D4",
+          "D4",
+          "C4",
+        ];
+
+        function getKeyElement(note) {
+          return document.querySelector(`[data-note="${note}"]`);
+        }
+        function selfPlay() {
+          let delay = 0;
+          const duration = 400; // ms per note
+          selfPlayNotes.forEach((note, i) => {
+            const keyEl = getKeyElement(note);
+            // Schedule note on
+            selfPlayTimeouts.push(
+              setTimeout(() => {
+                playNote(note, keyEl);
+              }, delay)
+            );
+            // Schedule note off
+            selfPlayTimeouts.push(
+              setTimeout(() => {
+                releaseNote(note, keyEl);
+              }, delay + duration - 50)
+            );
+            delay += duration;
+          });
+        }
+        function stopSelfPlay() {
+          selfPlayTimeouts.forEach(clearTimeout);
+          selfPlayTimeouts = [];
+          // Release all keys
+          document.querySelectorAll(".key.active").forEach((key) => {
+            releaseNote(key.dataset.note, key);
+          });
+        }
+        selfPlayBtn.addEventListener("click", () => {
+          selfPlaying = !selfPlaying;
+          if (selfPlaying) {
+            selfPlayBtn.textContent = "Stop Self Playing";
+            selfPlay();
+          } else {
+            selfPlayBtn.textContent = "Self Playing";
+            stopSelfPlay();
           }
         });
       };
