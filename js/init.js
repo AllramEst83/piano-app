@@ -9,7 +9,7 @@ export function initToneJS() {
   const chorus = new Tone.Chorus({
     frequency: 1.5,
     delayTime: 3.5,
-    depth: 0.7,
+    depth: 0.5, // match slider default
     wet: 0.5,
   }).connect(reverb);
 
@@ -35,5 +35,7 @@ export function initToneJS() {
 
   return {
     synth,
+    reverb,
+    chorus,
   };
 }

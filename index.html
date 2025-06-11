@@ -114,93 +114,153 @@
       </div>
     </div>
 
-    <!-- Self-playing button -->
-    <div
-      class="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 select-none"
-    ></div>
     <!-- Song select and play button -->
     <div
       class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 select-none"
     >
-      <select
-        id="song-select"
-        class="rounded-lg px-3 py-2 text-base bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/60 shadow"
+      <div
+        class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto"
       >
-        <option value="twinkle" class="bg-gray-800 text-white">
-          Twinkle Twinkle Little Star
-        </option>
-        <option value="mary" class="bg-gray-800 text-white">
-          Mary Had a Little Lamb
-        </option>
-        <option value="birthday" class="bg-gray-800 text-white">
-          Happy Birthday
-        </option>
-        <option value="macdonald" class="bg-gray-800 text-white">
-          Old MacDonald
-        </option>
-        <option value="jingle" class="bg-gray-800 text-white">
-          Jingle Bells
-        </option>
-        <option value="furelise" class="bg-gray-800 text-white">
-          Fur Elise
-        </option>
-        <option value="moonlight" class="bg-gray-800 text-white">
-          Moonlight Sonata (Excerpt)
-        </option>
-        <option value="odeToJoy" class="bg-gray-800 text-white">
-          Ode to Joy
-        </option>
-        <option value="rowRowRowYourBoat" class="bg-gray-800 text-white">
-          Row, Row, Row Your Boat
-        </option>
-        <option value="brahmsLullaby" class="bg-gray-800 text-white">
-          Brahms' Lullaby
-        </option>
-        <option value="greensleeves" class="bg-gray-800 text-white">
-          Greensleeves
-        </option>
-        <option value="entertainerChromatic" class="bg-gray-800 text-white">
-          The Entertainer (Chromatic Excerpt)
-        </option>
-        <option value="amazingGrace" class="bg-gray-800 text-white">
-          Amazing Grace
-        </option>
-        <option value="pinkPanther" class="bg-gray-800 text-white">
-          Pink Panther Theme
-        </option>
+        <div class="flex flex-col items-center gap-1 w-full sm:w-auto">
+          <div class="flex flex-row gap-3 mb-4">
+            <label class="flex flex-col items-center text-xs text-gray-200">
+              Reverb
+              <input
+                id="reverb-slider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.3"
+                class="w-40 accent-blue-400"
+              />
+            </label>
+            <label class="flex flex-col items-center text-xs text-gray-200">
+              Chorus
+              <input
+                id="chorus-slider"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                class="w-40 accent-pink-400"
+              />
+            </label>
+            <label class="flex flex-col items-center text-xs text-gray-200">
+              Pitch
+              <input
+                id="pitch-slider"
+                type="range"
+                min="-1200"
+                max="1200"
+                step="1"
+                value="0"
+                class="w-40 accent-green-400"
+              />
+            </label>
+            <label class="flex flex-col items-center text-xs text-gray-200">
+              Volume
+              <input
+                id="volume-slider"
+                type="range"
+                min="-40"
+                max="0"
+                step="1"
+                value="-8"
+                class="w-40 accent-yellow-400"
+              />
+            </label>
+          </div>
+          <div class="flex flex-row items-center gap-3 w-full sm:w-auto">
+            <select
+              id="song-select"
+              class="rounded-lg px-3 py-2 text-base bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/60 shadow w-full sm:w-auto"
+            >
+              <option value="twinkle" class="bg-gray-800 text-white">
+                Twinkle Twinkle Little Star
+              </option>
+              <option value="mary" class="bg-gray-800 text-white">
+                Mary Had a Little Lamb
+              </option>
+              <option value="birthday" class="bg-gray-800 text-white">
+                Happy Birthday
+              </option>
+              <option value="macdonald" class="bg-gray-800 text-white">
+                Old MacDonald
+              </option>
+              <option value="jingle" class="bg-gray-800 text-white">
+                Jingle Bells
+              </option>
+              <option value="furelise" class="bg-gray-800 text-white">
+                Fur Elise
+              </option>
+              <option value="moonlight" class="bg-gray-800 text-white">
+                Moonlight Sonata (Excerpt)
+              </option>
+              <option value="odeToJoy" class="bg-gray-800 text-white">
+                Ode to Joy
+              </option>
+              <option value="rowRowRowYourBoat" class="bg-gray-800 text-white">
+                Row, Row, Row Your Boat
+              </option>
+              <option value="brahmsLullaby" class="bg-gray-800 text-white">
+                Brahms' Lullaby
+              </option>
+              <option value="greensleeves" class="bg-gray-800 text-white">
+                Greensleeves
+              </option>
+              <option
+                value="entertainerChromatic"
+                class="bg-gray-800 text-white"
+              >
+                The Entertainer (Chromatic Excerpt)
+              </option>
+              <option value="amazingGrace" class="bg-gray-800 text-white">
+                Amazing Grace
+              </option>
+              <option value="pinkPanther" class="bg-gray-800 text-white">
+                Pink Panther Theme
+              </option>
 
-        <option value="hotCrossBunsSharp" class="bg-gray-800 text-white">
-          Hot Cross Buns (Sharp)
-        </option>
-        <option value="oldMacDonaldSharp" class="bg-gray-800 text-white">
-          Old MacDonald (Sharp)
-        </option>
-        <option value="frereJacquesFlat" class="bg-gray-800 text-white">
-          Frere Jacques (Flat)
-        </option>
+              <option value="hotCrossBunsSharp" class="bg-gray-800 text-white">
+                Hot Cross Buns (Sharp)
+              </option>
+              <option value="oldMacDonaldSharp" class="bg-gray-800 text-white">
+                Old MacDonald (Sharp)
+              </option>
+              <option value="frereJacquesFlat" class="bg-gray-800 text-white">
+                Frere Jacques (Flat)
+              </option>
 
-        <option value="arabesqueNo1" class="bg-gray-800 text-white">
-          Debussy: Arabesque No. 1
-        </option>
-        <option value="turkishMarch" class="bg-gray-800 text-white">
-          Mozart: Turkish March
-        </option>
-        <option value="griegMorningMood" class="bg-gray-800 text-white">
-          Grieg: Morning Mood
-        </option>
-        <option value="newWorldSymphony" class="bg-gray-800 text-white">
-          Dvorak: New World Symphony
-        </option>
-        <option value="moonlightSonataFull" class="bg-gray-800 text-white">
-          Beethoven: Moonlight Sonata (Full 1st Mvt Excerpt, Long)
-        </option>
-      </select>
-      <button
-        id="self-play-btn"
-        class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60"
-      >
-        Self Play
-      </button>
+              <option value="arabesqueNo1" class="bg-gray-800 text-white">
+                Debussy: Arabesque No. 1
+              </option>
+              <option value="turkishMarch" class="bg-gray-800 text-white">
+                Mozart: Turkish March
+              </option>
+              <option value="griegMorningMood" class="bg-gray-800 text-white">
+                Grieg: Morning Mood
+              </option>
+              <option value="newWorldSymphony" class="bg-gray-800 text-white">
+                Dvorak: New World Symphony
+              </option>
+              <option
+                value="moonlightSonataFull"
+                class="bg-gray-800 text-white"
+              >
+                Beethoven: Moonlight Sonata (Full 1st Mvt Excerpt, Long)
+              </option>
+            </select>
+            <button
+              id="self-play-btn"
+              class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60 w-full sm:w-auto"
+            >
+              Self Play
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -218,9 +278,23 @@
       let songTimeouts = [];
       let synth = {};
 
+      // Get slider elements
+      const reverbSlider = document.getElementById("reverb-slider");
+      const chorusSlider = document.getElementById("chorus-slider");
+      const pitchSlider = document.getElementById("pitch-slider");
+      const volumeSlider = document.getElementById("volume-slider");
+      // Store effect references
+      let reverb, chorus;
+
       // Ensure Tone.js is loaded and ready
       window.onload = function () {
-        const { synth } = initToneJS();
+        const toneInit = initToneJS();
+        synth = toneInit.synth;
+
+        // Get effect nodes from the synth chain
+        reverb = toneInit.reverb;
+        chorus = toneInit.chorus;
+
         // Function to activate audio context on first user interaction
         function activateAudioContext() {
           if (Tone.context.state !== "running") {
@@ -470,6 +544,30 @@
           } else {
             const selected = songSelect.value;
             playSongSnippet(songSnippets[selected]);
+          }
+        });
+
+        // Slider event listeners
+        reverbSlider.addEventListener("input", (e) => {
+          if (window.Tone && reverb) {
+            reverb.wet.value = parseFloat(e.target.value);
+          }
+        });
+        chorusSlider.addEventListener("input", (e) => {
+          if (window.Tone && chorus) {
+            const val = parseFloat(e.target.value);
+            chorus.depth = val;
+            chorus.wet.value = val;
+          }
+        });
+        pitchSlider.addEventListener("input", (e) => {
+          if (window.Tone && synth) {
+            synth.set({ detune: parseFloat(e.target.value) });
+          }
+        });
+        volumeSlider.addEventListener("input", (e) => {
+          if (window.Tone && synth) {
+            synth.set({ volume: parseFloat(e.target.value) });
           }
         });
       };
