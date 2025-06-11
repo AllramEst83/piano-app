@@ -1,0 +1,173 @@
+/* Custom CSS for piano keys and layout */
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  overflow: hidden; /* Prevent scrolling */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #1a202c; /* Dark background */
+}
+.piano-container {
+  position: relative;
+  display: flex;
+  width: 95vw; /* Use most of the viewport width for a wider piano */
+  max-width: 1400px; /* Limit max width for very large screens */
+  height: 600px; /* Increased height for a larger piano */
+  background-color: #333;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
+  box-sizing: border-box; /* Include padding in width/height */
+}
+.white-keys {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+.black-keys {
+  position: absolute;
+  top: 1.5rem; /* Match piano-container padding-top */
+  left: 1.5rem; /* Match piano-container padding-left */
+  width: calc(100% - 3rem); /* Adjust width to fit within padding */
+  height: 60%; /* Black keys are shorter */
+  display: flex;
+  z-index: 2;
+  pointer-events: none; /* Allow clicks to pass through to white keys where there's no black key */
+}
+.key {
+  flex-grow: 1;
+  border-radius: 0.5rem;
+  margin: 0 2px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 10px;
+  font-size: 0.8rem;
+  user-select: none; /* Prevent text selection */
+  transition: background-color 0.1s ease-out, transform 0.05s ease-out;
+  box-sizing: border-box;
+  white-space: nowrap; /* Prevent note labels from wrapping */
+  overflow: hidden; /* Hide overflow if notes are too long */
+  text-overflow: ellipsis; /* Add ellipsis if hidden */
+}
+.white-key {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+  height: 100%;
+}
+.white-key.active {
+  background-color: #e0e0e0;
+  transform: translateY(2px);
+  box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+.black-key {
+  background-color: #222;
+  border: 1px solid #000;
+  box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.5);
+  position: absolute; /* Positioned relative to .black-keys container */
+  width: calc(
+    100% / 19 * 0.6
+  ); /* Black key width is 60% of a white key's width */
+  height: 100%;
+  margin: 0; /* Override white key margin */
+  z-index: 3; /* Ensure black keys are on top */
+  pointer-events: auto; /* Make black keys clickable */
+  color: white; /* Black key note color */
+}
+.black-key.active {
+  background-color: #000;
+  transform: translateY(2px);
+  box-shadow: inset 0 -2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Black key positioning for 19 white keys */
+/* Formula: left = (white_key_index_to_the_left + 0.2) * (100% / 19) */
+
+/* C#3 (between C3 and D3, white key index 0) */
+.black-key[data-note="C#3"] {
+  left: calc(0.2 * (100% / 19));
+}
+/* D#3 (between D3 and E3, white key index 1) */
+.black-key[data-note="D#3"] {
+  left: calc(1.2 * (100% / 19));
+}
+/* F#3 (between F3 and G3, white key index 3) */
+.black-key[data-note="F#3"] {
+  left: calc(3.2 * (100% / 19));
+}
+/* G#3 (between G3 and A3, white key index 4) */
+.black-key[data-note="G#3"] {
+  left: calc(4.2 * (100% / 19));
+}
+/* A#3 (between A3 and B3, white key index 5) */
+.black-key[data-note="A#3"] {
+  left: calc(5.2 * (100% / 19));
+}
+
+/* C#4 (between C4 and D4, white key index 7) */
+.black-key[data-note="C#4"] {
+  left: calc(7.2 * (100% / 19));
+}
+/* D#4 (between D4 and E4, white key index 8) */
+.black-key[data-note="D#4"] {
+  left: calc(8.2 * (100% / 19));
+}
+/* F#4 (between F4 and G4, white key index 10) */
+.black-key[data-note="F#4"] {
+  left: calc(10.2 * (100% / 19));
+}
+/* G#4 (between G4 and A4, white key index 11) */
+.black-key[data-note="G#4"] {
+  left: calc(11.2 * (100% / 19));
+}
+/* A#4 (between A4 and B4, white key index 12) */
+.black-key[data-note="A#4"] {
+  left: calc(12.2 * (100% / 19));
+}
+
+/* C#5 (between C5 and D5, white key index 14) */
+.black-key[data-note="C#5"] {
+  left: calc(14.2 * (100% / 19));
+}
+/* D#5 (between D5 and E5, white key index 15) */
+.black-key[data-note="D#5"] {
+  left: calc(15.2 * (100% / 19));
+}
+/* F#5 (between F5 and G5, white key index 17) */
+.black-key[data-note="F#5"] {
+  left: calc(17.2 * (100% / 19));
+}
+
+/* Responsive adjustments for overall container to ensure full width usage */
+@media (max-width: 1024px) {
+  .piano-container {
+    width: 98vw;
+    padding: 1rem;
+  }
+  .black-keys {
+    top: 1rem;
+    left: 1rem;
+    width: calc(100% - 2rem);
+  }
+  .key {
+    font-size: 0.7rem;
+    padding-bottom: 5px;
+  }
+}
+@media (max-width: 768px) {
+  .piano-container {
+    height: 500px; /* Reduce height slightly on smaller screens */
+  }
+  .key {
+    font-size: 0.6rem;
+    padding-bottom: 3px;
+    margin: 0 1px;
+  }
+}
