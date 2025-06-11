@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Extended Virtual Piano</title>
+    <title>Simple Piano</title>
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tone.js CDN for audio synthesis -->
@@ -227,6 +227,58 @@
         <div class="key black-key" data-note="C#5">C#5</div>
         <div class="key black-key" data-note="D#5">D#5</div>
         <div class="key black-key" data-note="F#5">F#5</div>
+      </div>
+    </div>
+    <!-- Subtle page title -->
+    <div
+      class="fixed top-8 left-1/2 -translate-x-1/2 z-30 select-none text-gray-200 text-xl md:text-2xl font-semibold tracking-wide pointer-events-none"
+      style="text-shadow: 0 2px 8px #222a; margin-top: 0.5rem"
+    >
+      Simple piano
+    </div>
+    <!-- Info button moved outside piano, using info.png icon -->
+    <div class="fixed top-6 right-10 z-30 select-none">
+      <button
+        id="info-btn"
+        title="Show keyboard mapping"
+        class="bg-white/20 hover:bg-white/40 rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white/60 transition"
+        style="padding: 0"
+      >
+        <img
+          src="assets/info.png"
+          alt="info"
+          class="w-5 h-5 pointer-events-none"
+          draggable="false"
+        />
+      </button>
+      <div
+        id="info-overlay"
+        class="hidden absolute right-0 mt-2 w-72 bg-gray-900/95 text-white text-xs rounded-lg shadow-lg p-4 border border-gray-700"
+        style="backdrop-filter: blur(2px)"
+      >
+        <div class="font-semibold mb-2">Keyboard Mapping</div>
+        <div class="mb-1">
+          <span class="font-semibold">White Keys:</span>
+        </div>
+        <div class="ml-2 mb-1">
+          C3–B3: <span class="font-mono">A S D F G H J</span>
+        </div>
+        <div class="ml-2 mb-1">
+          C4–B4: <span class="font-mono">K L ; ' \ Z X</span>
+        </div>
+        <div class="ml-2 mb-2">
+          C5–G5: <span class="font-mono">C V B N M</span>
+        </div>
+        <div class="mb-1">
+          <span class="font-semibold">Black Keys:</span>
+        </div>
+        <div class="ml-2 mb-1">
+          C#3–A#3: <span class="font-mono">W E T Y U</span>
+        </div>
+        <div class="ml-2 mb-1">
+          C#4–A#4: <span class="font-mono">O P [ ] `</span>
+        </div>
+        <div class="ml-2">C#5–F#5: <span class="font-mono">1 2 3</span></div>
       </div>
     </div>
     <script>
@@ -550,6 +602,44 @@
             keyboardToNoteMap[code].element.dataset.keyboardCode = code;
           }
         }
+
+        // Info button overlay logic
+        const infoBtn = document.getElementById("info-btn");
+        const infoOverlay = document.getElementById("info-overlay");
+        let infoVisible = false;
+
+        function showInfo() {
+          infoOverlay.classList.remove("hidden");
+          infoVisible = true;
+        }
+        function hideInfo() {
+          infoOverlay.classList.add("hidden");
+          infoVisible = false;
+        }
+        infoBtn.addEventListener("mouseenter", showInfo);
+        infoBtn.addEventListener("mouseleave", hideInfo);
+        infoOverlay.addEventListener("mouseenter", showInfo);
+        infoOverlay.addEventListener("mouseleave", hideInfo);
+        // Also allow click to toggle for accessibility
+        infoBtn.addEventListener("click", () => {
+          if (infoVisible) {
+            hideInfo();
+          } else {
+            showInfo();
+          }
+        });
+
+        // Hide overlay if clicked outside
+        document.addEventListener("click", (e) => {
+          if (
+            !infoBtn.contains(e.target) &&
+            !infoOverlay.contains(e.target) &&
+            !infoOverlay.classList.contains("hidden")
+          ) {
+            infoOverlay.classList.add("hidden");
+            infoBtn.classList.remove("bg-white/40");
+          }
+        });
       };
     </script>
   </body>
