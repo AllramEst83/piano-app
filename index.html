@@ -9,50 +9,6 @@
     <link rel="stylesheet" href="css/site.css" />
   </head>
   <body>
-    <div class="piano-container">
-      <div class="white-keys">
-        <!-- White Keys (19 total) -->
-        <div class="key white-key" data-note="C3">C3</div>
-        <div class="key white-key" data-note="D3">D3</div>
-        <div class="key white-key" data-note="E3">E3</div>
-        <div class="key white-key" data-note="F3">F3</div>
-        <div class="key white-key" data-note="G3">G3</div>
-        <div class="key white-key" data-note="A3">A3</div>
-        <div class="key white-key" data-note="B3">B3</div>
-
-        <div class="key white-key" data-note="C4">C4</div>
-        <div class="key white-key" data-note="D4">D4</div>
-        <div class="key white-key" data-note="E4">E4</div>
-        <div class="key white-key" data-note="F4">F4</div>
-        <div class="key white-key" data-note="G4">G4</div>
-        <div class="key white-key" data-note="A4">A4</div>
-        <div class="key white-key" data-note="B4">B4</div>
-
-        <div class="key white-key" data-note="C5">C5</div>
-        <div class="key white-key" data-note="D5">D5</div>
-        <div class="key white-key" data-note="E5">E5</div>
-        <div class="key white-key" data-note="F5">F5</div>
-        <div class="key white-key" data-note="G5">G5</div>
-      </div>
-      <div class="black-keys">
-        <!-- Black Keys (13 total) -->
-        <div class="key black-key" data-note="C#3">C#3</div>
-        <div class="key black-key" data-note="D#3">D#3</div>
-        <div class="key black-key" data-note="F#3">F#3</div>
-        <div class="key black-key" data-note="G#3">G#3</div>
-        <div class="key black-key" data-note="A#3">A#3</div>
-
-        <div class="key black-key" data-note="C#4">C#4</div>
-        <div class="key black-key" data-note="D#4">D#4</div>
-        <div class="key black-key" data-note="F#4">F#4</div>
-        <div class="key black-key" data-note="G#4">G#4</div>
-        <div class="key black-key" data-note="A#4">A#4</div>
-
-        <div class="key black-key" data-note="C#5">C#5</div>
-        <div class="key black-key" data-note="D#5">D#5</div>
-        <div class="key black-key" data-note="F#5">F#5</div>
-      </div>
-    </div>
     <!-- Subtle page title -->
     <div
       class="fixed top-8 left-1/2 -translate-x-1/2 z-30 select-none text-gray-200 text-xl md:text-2xl font-semibold tracking-wide pointer-events-none"
@@ -113,6 +69,51 @@
         </div>
       </div>
     </div>
+    <div class="piano-container">
+      <div class="white-keys">
+        <!-- White Keys (19 total) -->
+        <div class="key white-key" data-note="C3">C3</div>
+        <div class="key white-key" data-note="D3">D3</div>
+        <div class="key white-key" data-note="E3">E3</div>
+        <div class="key white-key" data-note="F3">F3</div>
+        <div class="key white-key" data-note="G3">G3</div>
+        <div class="key white-key" data-note="A3">A3</div>
+        <div class="key white-key" data-note="B3">B3</div>
+
+        <div class="key white-key" data-note="C4">C4</div>
+        <div class="key white-key" data-note="D4">D4</div>
+        <div class="key white-key" data-note="E4">E4</div>
+        <div class="key white-key" data-note="F4">F4</div>
+        <div class="key white-key" data-note="G4">G4</div>
+        <div class="key white-key" data-note="A4">A4</div>
+        <div class="key white-key" data-note="B4">B4</div>
+
+        <div class="key white-key" data-note="C5">C5</div>
+        <div class="key white-key" data-note="D5">D5</div>
+        <div class="key white-key" data-note="E5">E5</div>
+        <div class="key white-key" data-note="F5">F5</div>
+        <div class="key white-key" data-note="G5">G5</div>
+      </div>
+      <div class="black-keys">
+        <!-- Black Keys (13 total) -->
+        <div class="key black-key" data-note="C#3">C#3</div>
+        <div class="key black-key" data-note="D#3">D#3</div>
+        <div class="key black-key" data-note="F#3">F#3</div>
+        <div class="key black-key" data-note="G#3">G#3</div>
+        <div class="key black-key" data-note="A#3">A#3</div>
+
+        <div class="key black-key" data-note="C#4">C#4</div>
+        <div class="key black-key" data-note="D#4">D#4</div>
+        <div class="key black-key" data-note="F#4">F#4</div>
+        <div class="key black-key" data-note="G#4">G#4</div>
+        <div class="key black-key" data-note="A#4">A#4</div>
+
+        <div class="key black-key" data-note="C#5">C#5</div>
+        <div class="key black-key" data-note="D#5">D#5</div>
+        <div class="key black-key" data-note="F#5">F#5</div>
+      </div>
+    </div>
+
     <!-- Self-playing button -->
     <div
       class="fixed bottom-8 left-1/2 -translate-x-1/2 z-30 select-none"
@@ -126,7 +127,7 @@
         class="rounded-lg px-3 py-2 text-base bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/60 shadow"
       >
         <option value="twinkle" class="bg-gray-800 text-white">
-          Twinkle Twinkle
+          Twinkle Twinkle Little Star
         </option>
         <option value="mary" class="bg-gray-800 text-white">
           Mary Had a Little Lamb
@@ -140,21 +141,65 @@
         <option value="jingle" class="bg-gray-800 text-white">
           Jingle Bells
         </option>
-        <option value="macdonald" class="bg-gray-800 text-white">
-          Old MacDonald
-        </option>
         <option value="furelise" class="bg-gray-800 text-white">
           Fur Elise
         </option>
         <option value="moonlight" class="bg-gray-800 text-white">
-          Moonlight Sonata
+          Moonlight Sonata (Excerpt)
+        </option>
+        <option value="odeToJoy" class="bg-gray-800 text-white">
+          Ode to Joy
+        </option>
+        <option value="rowRowRowYourBoat" class="bg-gray-800 text-white">
+          Row, Row, Row Your Boat
+        </option>
+        <option value="brahmsLullaby" class="bg-gray-800 text-white">
+          Brahms' Lullaby
+        </option>
+        <option value="greensleeves" class="bg-gray-800 text-white">
+          Greensleeves
+        </option>
+        <option value="entertainerChromatic" class="bg-gray-800 text-white">
+          The Entertainer (Chromatic Excerpt)
+        </option>
+        <option value="amazingGrace" class="bg-gray-800 text-white">
+          Amazing Grace
+        </option>
+        <option value="pinkPanther" class="bg-gray-800 text-white">
+          Pink Panther Theme
+        </option>
+
+        <option value="hotCrossBunsSharp" class="bg-gray-800 text-white">
+          Hot Cross Buns (Sharp)
+        </option>
+        <option value="oldMacDonaldSharp" class="bg-gray-800 text-white">
+          Old MacDonald (Sharp)
+        </option>
+        <option value="frereJacquesFlat" class="bg-gray-800 text-white">
+          Frere Jacques (Flat)
+        </option>
+
+        <option value="arabesqueNo1" class="bg-gray-800 text-white">
+          Debussy: Arabesque No. 1
+        </option>
+        <option value="turkishMarch" class="bg-gray-800 text-white">
+          Mozart: Turkish March
+        </option>
+        <option value="griegMorningMood" class="bg-gray-800 text-white">
+          Grieg: Morning Mood
+        </option>
+        <option value="newWorldSymphony" class="bg-gray-800 text-white">
+          Dvorak: New World Symphony
+        </option>
+        <option value="moonlightSonataFull" class="bg-gray-800 text-white">
+          Beethoven: Moonlight Sonata (Full 1st Mvt Excerpt, Long)
         </option>
       </select>
       <button
         id="self-play-btn"
         class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60"
       >
-        Self Playing
+        Self Play
       </button>
     </div>
     <!-- Tailwind CSS CDN for easy styling -->
@@ -379,7 +424,7 @@
           songTimeouts.forEach(clearTimeout);
           songTimeouts = [];
           songPlaying = false;
-          selfPlayBtn.textContent = "Play Song";
+          selfPlayBtn.textContent = "Start self play";
           // Release all keys
           document.querySelectorAll(".key.active").forEach((key) => {
             releaseNote(key.dataset.note, key);
@@ -394,7 +439,7 @@
         function playSongSnippet(notes) {
           stopSongPlayback();
           songPlaying = true;
-          selfPlayBtn.textContent = "Stop Song";
+          selfPlayBtn.textContent = "Stop self play";
           let delay = 0;
           const duration = 400;
           notes.forEach((note, i) => {
