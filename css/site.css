@@ -31,8 +31,8 @@ body {
 .black-keys {
   position: absolute;
   top: 1.5rem; /* Match piano-container padding-top */
-  left: 1.5rem; /* Match piano-container padding-left */
-  width: calc(100% - 3rem); /* Adjust width to fit within padding */
+  left: calc(1.5rem + (100% / 38)); /* Shift right by half a white key */
+  width: calc(100% - 3rem - (100% / 19)); /* Adjust width to match shift */
   height: 60%; /* Black keys are shorter */
   display: flex;
   z-index: 2;
@@ -96,78 +96,50 @@ body {
 }
 /* D#3 (between D3 and E3, white key index 1) */
 .black-key[data-note="D#3"] {
-  left: calc(1.2 * (100% / 19));
+  left: calc(1.1 * (100% / 16));
 }
 /* F#3 (between F3 and G3, white key index 3) */
 .black-key[data-note="F#3"] {
-  left: calc(3.2 * (100% / 19));
+  left: calc(3.2 * (100% / 18));
 }
 /* G#3 (between G3 and A3, white key index 4) */
 .black-key[data-note="G#3"] {
-  left: calc(4.2 * (100% / 19));
+  left: calc(4.2 * (100% / 18));
 }
 /* A#3 (between A3 and B3, white key index 5) */
 .black-key[data-note="A#3"] {
-  left: calc(5.2 * (100% / 19));
+  left: calc(5.5 * (100% / 19));
 }
 
 /* C#4 (between C4 and D4, white key index 7) */
 .black-key[data-note="C#4"] {
-  left: calc(7.2 * (100% / 19));
+  left: calc(7.2 * (100% / 18));
 }
 /* D#4 (between D4 and E4, white key index 8) */
 .black-key[data-note="D#4"] {
-  left: calc(8.2 * (100% / 19));
+  left: calc(8.2 * (100% / 18));
 }
 /* F#4 (between F4 and G4, white key index 10) */
 .black-key[data-note="F#4"] {
-  left: calc(10.2 * (100% / 19));
+  left: calc(10.2 * (100% / 18));
 }
 /* G#4 (between G4 and A4, white key index 11) */
 .black-key[data-note="G#4"] {
-  left: calc(11.2 * (100% / 19));
+  left: calc(11.2 * (100% / 18));
 }
 /* A#4 (between A4 and B4, white key index 12) */
 .black-key[data-note="A#4"] {
-  left: calc(12.2 * (100% / 19));
+  left: calc(12.2 * (100% / 18));
 }
-
 /* C#5 (between C5 and D5, white key index 14) */
 .black-key[data-note="C#5"] {
-  left: calc(14.2 * (100% / 19));
+  left: calc(14.2 * (100% / 18));
 }
 /* D#5 (between D5 and E5, white key index 15) */
 .black-key[data-note="D#5"] {
-  left: calc(15.2 * (100% / 19));
+  left: calc(15.2 * (100% / 18));
 }
 /* F#5 (between F5 and G5, white key index 17) */
 .black-key[data-note="F#5"] {
-  left: calc(17.2 * (100% / 19));
-}
-
-/* Responsive adjustments for overall container to ensure full width usage */
-@media (max-width: 1024px) {
-  .piano-container {
-    width: 98vw;
-    padding: 1rem;
-  }
-  .black-keys {
-    top: 1rem;
-    left: 1rem;
-    width: calc(100% - 2rem);
-  }
-  .key {
-    font-size: 0.7rem;
-    padding-bottom: 5px;
-  }
-}
-@media (max-width: 768px) {
-  .piano-container {
-    height: 500px; /* Reduce height slightly on smaller screens */
-  }
-  .key {
-    font-size: 0.6rem;
-    padding-bottom: 3px;
-    margin: 0 1px;
-  }
+  left: calc(17.2 * (100% / 18));
 }
