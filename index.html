@@ -262,6 +262,40 @@
         </div>
       </div>
     </div>
+    <!-- Mobile Blocker -->
+    <div
+      id="mobile-blocker"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700 text-white p-4 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none xl:hidden"
+    >
+      <div
+        class="glass-effect p-8 rounded-2xl max-w-sm w-full text-center flex flex-col items-center justify-center space-y-4"
+      >
+        <svg
+          class="w-24 h-24 text-white"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+          ></path>
+        </svg>
+        <h2 class="text-3xl font-extrabold leading-tight">
+          Oops! Looks like you're on a mobile device.
+        </h2>
+        <p class="text-lg font-medium text-white text-opacity-80">
+          For the best experience, please visit us on a larger screen, like a
+          tablet or desktop computer.
+        </p>
+        <p class="text-sm text-white text-opacity-60 mt-4">
+          Thank you for your understanding!
+        </p>
+      </div>
+    </div>
+    <!-- Mobile Blocker -->
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tone.js CDN for audio synthesis -->
@@ -271,20 +305,21 @@
       import { songSnippets } from "./js/songs.js";
       import { keyboardToNoteMap } from "./js/mappings.js";
 
-      // Global variables
+      // HTML elements
+      const mobileBlocker = document.getElementById("mobile-blocker");
       const selfPlayBtn = document.getElementById("self-play-btn");
       const songSelect = document.getElementById("song-select");
-      let songPlaying = false;
-      let songTimeouts = [];
-      let synth = {};
-
-      // Get slider elements
       const reverbSlider = document.getElementById("reverb-slider");
       const chorusSlider = document.getElementById("chorus-slider");
       const pitchSlider = document.getElementById("pitch-slider");
       const volumeSlider = document.getElementById("volume-slider");
-      // Store effect references
+
+      // Global variables
+      let songPlaying = false;
+      let songTimeouts = [];
+      let synth = {};
       let reverb, chorus;
+      const breakpoint = 1280;
 
       // Ensure Tone.js is loaded and ready
       window.onload = function () {
@@ -530,7 +565,6 @@
             );
             delay += duration;
           });
-          // Reset button after song
           songTimeouts.push(
             setTimeout(() => {
               stopSongPlayback();
@@ -546,8 +580,9 @@
             playSongSnippet(songSnippets[selected]);
           }
         });
+        // Self-playing logic
 
-        // Slider event listeners
+        // FX Slider event listeners
         reverbSlider.addEventListener("input", (e) => {
           if (window.Tone && reverb) {
             reverb.wet.value = parseFloat(e.target.value);
@@ -570,6 +605,21 @@
             synth.set({ volume: parseFloat(e.target.value) });
           }
         });
+        // FX Slider event listeners
+
+        // Mobile blocker logic
+        function checkScreenSize() {
+          if (window.innerWidth < breakpoint) {
+            mobileBlocker.classList.remove("opacity-0", "pointer-events-none");
+            mobileBlocker.classList.add("opacity-100");
+          } else {
+            mobileBlocker.classList.remove("opacity-100");
+            mobileBlocker.classList.add("opacity-0", "pointer-events-none");
+          }
+        }
+        checkScreenSize();
+        window.addEventListener("resize", checkScreenSize);
+        // Mobile blocker logic
       };
     </script>
   </body>
