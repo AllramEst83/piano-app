@@ -64,8 +64,8 @@
         <div class="border-t border-gray-700 pt-2">
           <div class="font-semibold mb-1">Self Playing Controls:</div>
           <div class="ml-2">1. Select a song from the dropdown menu</div>
-          <div class="ml-2">2. Click "Play Song" to start</div>
-          <div class="ml-2">3. Click "Stop Song" to stop playback</div>
+          <div class="ml-2">2. Click "Self play" to start</div>
+          <div class="ml-2">3. Click "Stop self play" to stop playback</div>
         </div>
       </div>
     </div>
@@ -544,14 +544,18 @@
         function getKeyElement(note) {
           return document.querySelector(`.key[data-note="${note}"]`);
         }
-
         function playSongSnippet(notes) {
           stopSongPlayback();
           songPlaying = true;
           selfPlayBtn.textContent = "Stop self play";
           let delay = 0;
-          const duration = 400;
-          notes.forEach((note, i) => {
+
+          notes.forEach((noteData) => {
+            const note =
+              typeof noteData === "string" ? noteData : noteData.note;
+            const duration =
+              typeof noteData === "string" ? 400 : noteData.duration;
+
             const keyEl = getKeyElement(note);
             songTimeouts.push(
               setTimeout(() => {
@@ -565,6 +569,7 @@
             );
             delay += duration;
           });
+
           songTimeouts.push(
             setTimeout(() => {
               stopSongPlayback();
