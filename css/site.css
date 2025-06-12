@@ -9,6 +9,42 @@ body {
   min-height: 100vh; /* Full viewport height */
   background-color: #1a202c; /* Dark background */
 }
+body:not(.ready) .piano-container,
+body:not(.ready) .fixed:not(#loading-spinner):not(#mobile-blocker) {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Mobile blocker starts hidden but can be shown before ready state */
+#mobile-blocker {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 500ms ease-out, visibility 500ms;
+}
+
+/* Show mobile blocker when needed */
+#mobile-blocker.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Normal content transitions when ready */
+body.ready .piano-container,
+body.ready .fixed:not(#loading-spinner):not(#mobile-blocker) {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 500ms ease-out, visibility 500ms;
+}
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border-radius: 20px;
+}
+
+/* PIANO CSS */
 .piano-container {
   position: relative;
   display: flex;
@@ -143,12 +179,4 @@ body {
 .black-key[data-note="F#5"] {
   left: calc(17.2 * (100% / 18));
 }
-
-.glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 20px;
-}
+/* PIANO CSS */

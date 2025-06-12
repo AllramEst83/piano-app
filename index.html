@@ -9,6 +9,15 @@
     <link rel="stylesheet" href="css/site.css" />
   </head>
   <body>
+    <!-- Initial Loading Spinner -->
+    <div
+      id="loading-spinner"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700"
+    >
+      <div
+        class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-white"
+      ></div>
+    </div>
     <!-- Subtle page title -->
     <div
       class="fixed top-8 left-1/2 -translate-x-1/2 z-30 select-none text-gray-200 text-xl md:text-2xl font-semibold tracking-wide pointer-events-none"
@@ -312,6 +321,7 @@
       import { keyboardToNoteMap } from "./js/mappings.js";
 
       // HTML elements
+      const loadingSpinner = document.getElementById("loading-spinner");
       const mobileBlocker = document.getElementById("mobile-blocker");
       const selfPlayBtn = document.getElementById("self-play-btn");
       const songSelect = document.getElementById("song-select");
@@ -328,7 +338,9 @@
       const breakpoint = 1280;
 
       // Ensure Tone.js is loaded and ready
-      window.onload = function () {
+      window.onload = async function () {
+        await handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, true);
+
         const toneInit = initToneJS();
         synth = toneInit.synth;
 
@@ -618,19 +630,47 @@
         });
         // FX Slider event listeners
 
-        // Mobile blocker logic
-        function checkScreenSize() {
-          if (window.innerWidth < breakpoint) {
+        // Spinner logic &&  Mobile blocker logic
+        function handleScreenSize(
+          loadingSpinner,
+          mobileBlocker,
+          breakpoint,
+          isInitialLoad = false
+        ) {
+          const isMobile = window.innerWidth < breakpoint;
+
+          if (isMobile) {
             mobileBlocker.classList.remove("opacity-0", "pointer-events-none");
-            mobileBlocker.classList.add("opacity-100");
+            mobileBlocker.classList.add("opacity-100", "show");
           } else {
-            mobileBlocker.classList.remove("opacity-100");
+            mobileBlocker.classList.remove("opacity-100", "show");
             mobileBlocker.classList.add("opacity-0", "pointer-events-none");
+            if (!isInitialLoad) {
+              document.body.classList.add("ready");
+            }
+          }
+
+          // Handle initial loading spinner if present
+          if (isInitialLoad) {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                loadingSpinner.style.transition = "opacity 500ms ease-out";
+                loadingSpinner.style.opacity = "0";
+                if (!isMobile) {
+                  document.body.classList.add("ready");
+                }
+                setTimeout(() => {
+                  loadingSpinner.style.display = "none";
+                  resolve();
+                }, 500);
+              }, 800);
+            });
           }
         }
-        checkScreenSize();
-        window.addEventListener("resize", checkScreenSize);
-        // Mobile blocker logic
+
+        window.addEventListener("resize", () => {
+          handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, false);
+        });
       };
     </script>
   </body>
