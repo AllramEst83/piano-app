@@ -86,6 +86,15 @@
         </div>
       </div>
     </div>
+    <div class="fixed top-6 left-6 z-50">
+      <button
+        id="power-btn"
+        class="w-16 h-16 rounded-full bg-red-700 ring-2 ring-red-300 shadow-inner transition-all duration-300 text-white font-bold"
+        title="Power"
+      >
+        ●
+      </button>
+    </div>
     <div class="piano-container">
       <div class="white-keys">
         <!-- White Keys (19 total) -->
@@ -133,6 +142,7 @@
 
     <!-- Song select and play button -->
     <div
+      id="control-panel"
       class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 select-none"
     >
       <div
@@ -258,43 +268,85 @@
       const chorusSlider = document.getElementById("chorus-slider");
       const pitchSlider = document.getElementById("pitch-slider");
       const volumeSlider = document.getElementById("volume-slider");
+      const powerBtn = document.getElementById("power-btn");
 
       // Global variables
       let songPlaying = false;
       let songTimeouts = [];
-      let synth = {};
-      let reverb, chorus;
+      let isPowerOn = false;
+      let synth, reverb, chorus;
       const breakpoint = 1280;
 
-      // Ensure Tone.js is loaded and ready
-      window.onload = async function () {
-        await handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, true);
-
+      const initPiano = async () => {
         const toneInit = await initToneJS();
-
         synth = toneInit.synth;
         reverb = toneInit.reverb;
         chorus = toneInit.chorus;
+      };
+      const disableControls = () => {
+        document
+          .querySelectorAll(
+            "#control-panel button, #control-panel select, #control-panel input"
+          )
+          .forEach((el) => {
+            el.disabled = true;
+            el.classList.add("opacity-40", "cursor-not-allowed");
+          });
 
-        // Function to activate audio context on first user interaction
-        function activateAudioContext() {
-          if (Tone.context.state !== "running") {
-            Tone.start();
-            console.log("AudioContext resumed!");
+        powerBtn.classList.add("glow-off");
+      };
+
+      const enableControls = () => {
+        document
+          .querySelectorAll(
+            "#control-panel button, #control-panel select, #control-panel input"
+          )
+          .forEach((el) => {
+            el.disabled = false;
+            el.classList.remove("opacity-40", "cursor-not-allowed");
+          });
+      };
+
+      window.onload = async function () {
+        await handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, true);
+
+        powerBtn.addEventListener("click", async () => {
+          if (!isPowerOn) {
+            await Tone.start();
+            await initPiano();
+            enablePianoInteraction();
+            powerBtn.classList.remove("glow-off");
+            powerBtn.classList.add("glow-on");
+            powerBtn.textContent = "●";
+            isPowerOn = true;
+          } else {
+            disablePianoInteraction();
+            powerBtn.classList.remove("glow-on");
+            powerBtn.classList.add("glow-off");
+            powerBtn.textContent = "●";
+            isPowerOn = false;
           }
-          // Remove the event listener after activation
-          document.removeEventListener("touchstart", activateAudioContext);
-          document.removeEventListener("mousedown", activateAudioContext);
-        }
+        });
 
-        // Add event listeners for touchstart and mousedown to activate audio context
-        // This is crucial for audio playback in modern browsers
-        document.addEventListener("touchstart", activateAudioContext, {
-          once: true,
-        });
-        document.addEventListener("mousedown", activateAudioContext, {
-          once: true,
-        });
+        const enablePianoInteraction = () => {
+          document
+            .querySelectorAll(".key")
+            .forEach((key) =>
+              key.classList.remove("pointer-events-none", "opacity-60")
+            );
+
+          enableControls();
+        };
+
+        const disablePianoInteraction = () => {
+          document
+            .querySelectorAll(".key")
+            .forEach((key) =>
+              key.classList.add("pointer-events-none", "opacity-60")
+            );
+
+          disableControls();
+        };
 
         // Select all piano keys
         const pianoKeys = document.querySelectorAll(".key");
@@ -303,6 +355,7 @@
 
         // Function to play a note
         function playNote(note, keyElement) {
+          if (!isPowerOn) return;
           // Check if the note is already active to prevent re-triggering
           if (!keyElement.classList.contains("active")) {
             synth.triggerAttack(note);
@@ -623,6 +676,7 @@
         window.addEventListener("resize", () => {
           handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, false);
         });
+        disablePianoInteraction();
       };
     </script>
   </body>
