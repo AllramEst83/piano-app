@@ -197,77 +197,6 @@
               <option value="twinkle" class="bg-gray-800 text-white">
                 Twinkle Twinkle Little Star
               </option>
-              <option value="mary" class="bg-gray-800 text-white">
-                Mary Had a Little Lamb
-              </option>
-              <option value="birthday" class="bg-gray-800 text-white">
-                Happy Birthday
-              </option>
-              <option value="macdonald" class="bg-gray-800 text-white">
-                Old MacDonald
-              </option>
-              <option value="jingle" class="bg-gray-800 text-white">
-                Jingle Bells
-              </option>
-              <option value="furelise" class="bg-gray-800 text-white">
-                Fur Elise
-              </option>
-              <option value="moonlight" class="bg-gray-800 text-white">
-                Moonlight Sonata (Excerpt)
-              </option>
-              <option value="odeToJoy" class="bg-gray-800 text-white">
-                Ode to Joy
-              </option>
-              <option value="rowRowRowYourBoat" class="bg-gray-800 text-white">
-                Row, Row, Row Your Boat
-              </option>
-              <option value="brahmsLullaby" class="bg-gray-800 text-white">
-                Brahms' Lullaby
-              </option>
-              <option value="greensleeves" class="bg-gray-800 text-white">
-                Greensleeves
-              </option>
-              <option
-                value="entertainerChromatic"
-                class="bg-gray-800 text-white"
-              >
-                The Entertainer (Chromatic Excerpt)
-              </option>
-              <option value="amazingGrace" class="bg-gray-800 text-white">
-                Amazing Grace
-              </option>
-              <option value="pinkPanther" class="bg-gray-800 text-white">
-                Pink Panther Theme
-              </option>
-
-              <option value="hotCrossBunsSharp" class="bg-gray-800 text-white">
-                Hot Cross Buns (Sharp)
-              </option>
-              <option value="oldMacDonaldSharp" class="bg-gray-800 text-white">
-                Old MacDonald (Sharp)
-              </option>
-              <option value="frereJacquesFlat" class="bg-gray-800 text-white">
-                Frere Jacques (Flat)
-              </option>
-
-              <option value="arabesqueNo1" class="bg-gray-800 text-white">
-                Debussy: Arabesque No. 1
-              </option>
-              <option value="turkishMarch" class="bg-gray-800 text-white">
-                Mozart: Turkish March
-              </option>
-              <option value="griegMorningMood" class="bg-gray-800 text-white">
-                Grieg: Morning Mood
-              </option>
-              <option value="newWorldSymphony" class="bg-gray-800 text-white">
-                Dvorak: New World Symphony
-              </option>
-              <option
-                value="moonlightSonataFull"
-                class="bg-gray-800 text-white"
-              >
-                Beethoven: Moonlight Sonata (Full 1st Mvt Excerpt, Long)
-              </option>
             </select>
             <button
               id="self-play-btn"
@@ -317,7 +246,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <script type="module">
       import { initToneJS } from "./js/init.js";
-      import { songSnippets } from "./js/songs.js";
+      import { songSnippets, noteDurations } from "./js/songs.js";
       import { keyboardToNoteMap } from "./js/mappings.js";
 
       // HTML elements
@@ -341,10 +270,9 @@
       window.onload = async function () {
         await handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, true);
 
-        const toneInit = initToneJS();
-        synth = toneInit.synth;
+        const toneInit = await initToneJS();
 
-        // Get effect nodes from the synth chain
+        synth = toneInit.synth;
         reverb = toneInit.reverb;
         chorus = toneInit.chorus;
 
@@ -548,8 +476,8 @@
 
         // Self-playing logic
         function stopSongPlayback() {
-          songTimeouts.forEach(clearTimeout);
-          songTimeouts = [];
+          Tone.Transport.cancel();
+          Tone.Transport.stop();
           songPlaying = false;
           selfPlayBtn.textContent = "Start self play";
           // Release all keys
@@ -562,40 +490,64 @@
         function getKeyElement(note) {
           return document.querySelector(`.key[data-note="${note}"]`);
         }
-        function playSongSnippet(notes) {
+
+        async function playSongSnippet(songData) {
+          if (!songData || !Array.isArray(songData.sequence)) return;
+
+          if (Tone.context.state !== "running") await Tone.start();
+
           stopSongPlayback();
           songPlaying = true;
           selfPlayBtn.textContent = "Stop self play";
-          let delay = 0;
 
-          notes.forEach((noteData) => {
-            const note =
-              typeof noteData === "string" ? noteData : noteData.note;
-            const duration =
-              typeof noteData === "string" ? 400 : noteData.duration;
+          const sequence = songData.sequence;
+          const bpm = songData.bpm || 120;
 
-            const keyEl = getKeyElement(note);
-            songTimeouts.push(
-              setTimeout(() => {
-                playNote(note, keyEl);
-              }, delay)
-            );
-            songTimeouts.push(
-              setTimeout(() => {
-                releaseNote(note, keyEl);
-              }, delay + duration - 50)
-            );
-            delay += duration;
-          });
+          Tone.Transport.cancel();
+          Tone.Transport.bpm.set({ value: bpm });
 
-          songTimeouts.push(
-            setTimeout(() => {
-              stopSongPlayback();
-            }, delay + 100)
-          );
+          let offset = 0;
+
+          for (const noteObj of sequence) {
+            const duration = noteDurations[noteObj.type] || "4n";
+            const pauseBefore = noteObj.pauseBefore || 0;
+            const pauseAfter = noteObj.pauseAfter || 0;
+
+            offset += Tone.Time(pauseBefore).toSeconds();
+
+            Tone.Transport.scheduleOnce((time) => {
+              synth.triggerAttackRelease(noteObj.note, duration, time);
+            }, offset);
+
+            Tone.Transport.scheduleOnce((time) => {
+              const keyEl = document.querySelector(
+                `.key[data-note="${noteObj.note}"]`
+              );
+              if (keyEl) {
+                keyEl.classList.add("active");
+                setTimeout(() => {
+                  keyEl.classList.remove("active");
+                }, Tone.Time(duration).toMilliseconds());
+              }
+            }, offset);
+
+            offset += Tone.Time(duration).toSeconds();
+            offset += Tone.Time(pauseAfter).toSeconds();
+          }
+
+          Tone.Transport.scheduleOnce(() => {
+            stopSongPlayback();
+          }, offset);
+
+          Tone.Transport.start("+0.1");
         }
 
-        selfPlayBtn.addEventListener("click", () => {
+        selfPlayBtn.addEventListener("click", async () => {
+          if (Tone.context.state !== "running") {
+            await Tone.start();
+            console.log("AudioContext resumed on Self Play click");
+          }
+
           if (songPlaying) {
             stopSongPlayback();
           } else {
