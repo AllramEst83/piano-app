@@ -249,435 +249,84 @@
         </p>
       </div>
     </div>
+
+    <div
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-yellow-400 via-green-400 via-blue-500 to-purple-600 animate-pulse select-none pointer-events-none z-20 mb-1"
+    >
+      Created with Tone.js
+    </div>
+
     <!-- Mobile Blocker -->
     <!-- Tailwind CSS CDN for easy styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Tone.js CDN for audio synthesis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+    <script src="https://unpkg.com/tone"></script>
     <script type="module">
-      import { initToneJS } from "./js/init.js";
+      import { initAudio } from "./js/audio.js";
+      import {
+        initPianoInteraction,
+        disablePianoInteraction,
+      } from "./js/pianoInteraction.js";
+      import { initSelfPlayer, stopSongPlayback } from "./js/selfPlayer.js";
+      import {
+        initUI,
+        enableControls,
+        disableControls,
+        updatePowerButton,
+      } from "./js/ui.js";
       import { songSnippets, noteDurations } from "./js/songs.js";
       import { keyboardToNoteMap } from "./js/mappings.js";
 
-      // HTML elements
-      const loadingSpinner = document.getElementById("loading-spinner");
-      const mobileBlocker = document.getElementById("mobile-blocker");
+      //--- STATE ---//
+      let isPowerOn = false;
+      let audioContext = {}; // Will hold { synth, reverb, chorus }
+
+      //--- DOM ELEMENTS ---//
+      const powerBtn = document.getElementById("power-btn");
       const selfPlayBtn = document.getElementById("self-play-btn");
       const songSelect = document.getElementById("song-select");
-      const reverbSlider = document.getElementById("reverb-slider");
-      const chorusSlider = document.getElementById("chorus-slider");
-      const pitchSlider = document.getElementById("pitch-slider");
-      const volumeSlider = document.getElementById("volume-slider");
-      const powerBtn = document.getElementById("power-btn");
 
-      // Global variables
-      let songPlaying = false;
-      let songTimeouts = [];
-      let isPowerOn = false;
-      let synth, reverb, chorus;
-      const breakpoint = 1280;
-
-      const initPiano = async () => {
-        const toneInit = await initToneJS();
-        synth = toneInit.synth;
-        reverb = toneInit.reverb;
-        chorus = toneInit.chorus;
-      };
-      const disableControls = () => {
-        document
-          .querySelectorAll(
-            "#control-panel button, #control-panel select, #control-panel input"
-          )
-          .forEach((el) => {
-            el.disabled = true;
-            el.classList.add("opacity-40", "cursor-not-allowed");
-          });
-
-        powerBtn.classList.add("glow-off");
-      };
-
-      const enableControls = () => {
-        document
-          .querySelectorAll(
-            "#control-panel button, #control-panel select, #control-panel input"
-          )
-          .forEach((el) => {
-            el.disabled = false;
-            el.classList.remove("opacity-40", "cursor-not-allowed");
-          });
-      };
-
-      window.onload = async function () {
-        await handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, true);
-
-        powerBtn.addEventListener("click", async () => {
-          if (!isPowerOn) {
-            await Tone.start();
-            await initPiano();
-            enablePianoInteraction();
-            powerBtn.classList.remove("glow-off");
-            powerBtn.classList.add("glow-on");
-            powerBtn.textContent = "●";
-            isPowerOn = true;
-          } else {
-            disablePianoInteraction();
-            powerBtn.classList.remove("glow-on");
-            powerBtn.classList.add("glow-off");
-            powerBtn.textContent = "●";
-            isPowerOn = false;
-          }
-        });
-
-        const enablePianoInteraction = () => {
-          document
-            .querySelectorAll(".key")
-            .forEach((key) =>
-              key.classList.remove("pointer-events-none", "opacity-60")
-            );
-
-          enableControls();
-        };
-
-        const disablePianoInteraction = () => {
-          document
-            .querySelectorAll(".key")
-            .forEach((key) =>
-              key.classList.add("pointer-events-none", "opacity-60")
-            );
-
-          disableControls();
-        };
-
-        // Select all piano keys
-        const pianoKeys = document.querySelectorAll(".key");
-        let activeTouches = {}; // To track multiple touches for polyphony (not primary for desktop but good practice)
-        let pressedKeyboardKeys = new Set(); // To track currently pressed keyboard keys to prevent repeated notes
-
-        // Function to play a note
-        function playNote(note, keyElement) {
-          if (!isPowerOn) return;
-          // Check if the note is already active to prevent re-triggering
-          if (!keyElement.classList.contains("active")) {
-            synth.triggerAttack(note);
-            keyElement.classList.add("active");
-          }
-        }
-
-        // Function to release a note
-        function releaseNote(note, keyElement) {
-          // Ensure the key is currently active before releasing the note
-          if (keyElement.classList.contains("active")) {
-            synth.triggerRelease(note);
-            keyElement.classList.remove("active");
-          }
-        }
-
-        // Event listeners for mouse interaction
-        pianoKeys.forEach((key) => {
-          const note = key.dataset.note;
-          key.addEventListener("mousedown", (e) => {
-            e.preventDefault(); // Prevent text selection on long press
-            playNote(note, key);
-          });
-          key.addEventListener("mouseup", () => {
-            releaseNote(note, key);
-          });
-          // Handle mouse leaving the key while pressed
-          key.addEventListener("mouseleave", () => {
-            if (key.classList.contains("active")) {
-              releaseNote(note, key);
-            }
-          });
-        });
-
-        // Event listeners for touch interaction (still included for basic touch support, though not mobile-optimized layout)
-        pianoKeys.forEach((key) => {
-          const note = key.dataset.note;
-          key.addEventListener(
-            "touchstart",
-            (e) => {
-              e.preventDefault(); // Prevent default browser touch behavior (e.g., scrolling)
-              // Iterate through all touches to handle multi-touch
-              Array.from(e.changedTouches).forEach((touch) => {
-                const targetKey = e.target.closest(".key");
-                if (targetKey && targetKey === key) {
-                  // Ensure the touch started on this key
-                  playNote(note, key);
-                  activeTouches[touch.identifier] = {
-                    keyElement: key,
-                    note: note,
-                  };
-                }
-              });
-            },
-            { passive: false }
-          ); // Use passive: false to allow preventDefault
-          key.addEventListener("touchend", (e) => {
-            e.preventDefault(); // Prevent default browser touch behavior
-            Array.from(e.changedTouches).forEach((touch) => {
-              if (activeTouches[touch.identifier]) {
-                releaseNote(
-                  activeTouches[touch.identifier].note,
-                  activeTouches[touch.identifier].keyElement
-                );
-                delete activeTouches[touch.identifier];
-              }
-            });
-          });
-          key.addEventListener("touchcancel", (e) => {
-            e.preventDefault(); // Prevent default browser touch behavior
-            Array.from(e.changedTouches).forEach((touch) => {
-              if (activeTouches[touch.identifier]) {
-                releaseNote(
-                  activeTouches[touch.identifier].note,
-                  activeTouches[touch.identifier].keyElement
-                );
-                delete activeTouches[touch.identifier];
-              }
-            });
-          });
-        });
-
-        // Handle global mouse release to ensure notes are turned off if mouse is released anywhere
-        document.addEventListener("mouseup", () => {
-          pianoKeys.forEach((key) => {
-            if (
-              key.classList.contains("active") &&
-              !pressedKeyboardKeys.has(key.dataset.keyboardCode)
-            ) {
-              releaseNote(key.dataset.note, key);
-            }
-          });
-        });
-
-        // Handle global touchend as a fallback
-        document.addEventListener("touchend", (e) => {
-          if (Object.keys(activeTouches).length === 0) {
-            pianoKeys.forEach((key) => {
-              if (key.classList.contains("active")) {
-                releaseNote(key.dataset.note, key);
-              }
-            });
-          }
-        });
-
-        // Keyboard event listeners
-        document.addEventListener("keydown", (e) => {
-          // Prevent default browser behavior for common keys that might scroll or trigger other actions
-          if (e.code in keyboardToNoteMap && !pressedKeyboardKeys.has(e.code)) {
-            e.preventDefault();
-            const { note, element } = keyboardToNoteMap[e.code];
-            playNote(note, element);
-            pressedKeyboardKeys.add(e.code); // Mark key as pressed
-          }
-        });
-
-        document.addEventListener("keyup", (e) => {
-          if (e.code in keyboardToNoteMap && pressedKeyboardKeys.has(e.code)) {
-            e.preventDefault();
-            const { note, element } = keyboardToNoteMap[e.code];
-            releaseNote(note, element);
-            pressedKeyboardKeys.delete(e.code); // Mark key as released
-          }
-        });
-
-        // Add keyboard code to data attributes for easier mapping in JS
-        // This is done after DOM is loaded
-        for (const code in keyboardToNoteMap) {
-          if (keyboardToNoteMap[code].element) {
-            keyboardToNoteMap[code].element.dataset.keyboardCode = code;
-          }
-        }
-
-        // Info button overlay logic
-        const infoBtn = document.getElementById("info-btn");
-        const infoOverlay = document.getElementById("info-overlay");
-        let infoVisible = false;
-
-        function showInfo() {
-          infoOverlay.classList.remove("hidden");
-          infoVisible = true;
-        }
-        function hideInfo() {
-          infoOverlay.classList.add("hidden");
-          infoVisible = false;
-        }
-        infoBtn.addEventListener("mouseenter", showInfo);
-        infoBtn.addEventListener("mouseleave", hideInfo);
-        infoOverlay.addEventListener("mouseenter", showInfo);
-        infoOverlay.addEventListener("mouseleave", hideInfo);
-        // Also allow click to toggle for accessibility
-        infoBtn.addEventListener("click", () => {
-          if (infoVisible) {
-            hideInfo();
-          } else {
-            showInfo();
-          }
-        });
-
-        // Hide overlay if clicked outside
-        document.addEventListener("click", (e) => {
-          if (
-            !infoBtn.contains(e.target) &&
-            !infoOverlay.contains(e.target) &&
-            !infoOverlay.classList.contains("hidden")
-          ) {
-            infoOverlay.classList.add("hidden");
-            infoBtn.classList.remove("bg-white/40");
-          }
-        });
-
-        // Self-playing logic
-        function stopSongPlayback() {
-          Tone.Transport.cancel();
-          Tone.Transport.stop();
-          songPlaying = false;
-          selfPlayBtn.textContent = "Start self play";
-          // Release all keys
-          document.querySelectorAll(".key.active").forEach((key) => {
-            releaseNote(key.dataset.note, key);
-          });
-        }
-
-        // Helper function to get the key element for a note
-        function getKeyElement(note) {
-          return document.querySelector(`.key[data-note="${note}"]`);
-        }
-
-        async function playSongSnippet(songData) {
-          if (!songData || !Array.isArray(songData.sequence)) return;
-
-          if (Tone.context.state !== "running") await Tone.start();
-
-          stopSongPlayback();
-          songPlaying = true;
-          selfPlayBtn.textContent = "Stop self play";
-
-          const sequence = songData.sequence;
-          const bpm = songData.bpm || 120;
-
-          Tone.Transport.cancel();
-          Tone.Transport.bpm.set({ value: bpm });
-
-          let offset = 0;
-
-          for (const noteObj of sequence) {
-            const duration = noteDurations[noteObj.type] || "4n";
-            const pauseBefore = noteObj.pauseBefore || 0;
-            const pauseAfter = noteObj.pauseAfter || 0;
-
-            offset += Tone.Time(pauseBefore).toSeconds();
-
-            Tone.Transport.scheduleOnce((time) => {
-              synth.triggerAttackRelease(noteObj.note, duration, time);
-            }, offset);
-
-            Tone.Transport.scheduleOnce((time) => {
-              const keyEl = document.querySelector(
-                `.key[data-note="${noteObj.note}"]`
-              );
-              if (keyEl) {
-                keyEl.classList.add("active");
-                setTimeout(() => {
-                  keyEl.classList.remove("active");
-                }, Tone.Time(duration).toMilliseconds());
-              }
-            }, offset);
-
-            offset += Tone.Time(duration).toSeconds();
-            offset += Tone.Time(pauseAfter).toSeconds();
-          }
-
-          Tone.Transport.scheduleOnce(() => {
-            stopSongPlayback();
-          }, offset);
-
-          Tone.Transport.start("+0.1");
-        }
-
-        selfPlayBtn.addEventListener("click", async () => {
-          if (Tone.context.state !== "running") {
-            await Tone.start();
-            console.log("AudioContext resumed on Self Play click");
-          }
-
-          if (songPlaying) {
-            stopSongPlayback();
-          } else {
-            const selected = songSelect.value;
-            playSongSnippet(songSnippets[selected]);
-          }
-        });
-        // Self-playing logic
-
-        // FX Slider event listeners
-        reverbSlider.addEventListener("input", (e) => {
-          if (window.Tone && reverb) {
-            reverb.wet.value = parseFloat(e.target.value);
-          }
-        });
-        chorusSlider.addEventListener("input", (e) => {
-          if (window.Tone && chorus) {
-            const val = parseFloat(e.target.value);
-            chorus.depth = val;
-            chorus.wet.value = val;
-          }
-        });
-        pitchSlider.addEventListener("input", (e) => {
-          if (window.Tone && synth) {
-            synth.set({ detune: parseFloat(e.target.value) });
-          }
-        });
-        volumeSlider.addEventListener("input", (e) => {
-          if (window.Tone && synth) {
-            synth.set({ volume: parseFloat(e.target.value) });
-          }
-        });
-        // FX Slider event listeners
-
-        // Spinner logic &&  Mobile blocker logic
-        function handleScreenSize(
-          loadingSpinner,
-          mobileBlocker,
-          breakpoint,
-          isInitialLoad = false
-        ) {
-          const isMobile = window.innerWidth < breakpoint;
-
-          if (isMobile) {
-            mobileBlocker.classList.remove("opacity-0", "pointer-events-none");
-            mobileBlocker.classList.add("opacity-100", "show");
-          } else {
-            mobileBlocker.classList.remove("opacity-100", "show");
-            mobileBlocker.classList.add("opacity-0", "pointer-events-none");
-            if (!isInitialLoad) {
-              document.body.classList.add("ready");
-            }
-          }
-
-          // Handle initial loading spinner if present
-          if (isInitialLoad) {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                loadingSpinner.style.transition = "opacity 500ms ease-out";
-                loadingSpinner.style.opacity = "0";
-                if (!isMobile) {
-                  document.body.classList.add("ready");
-                }
-                setTimeout(() => {
-                  loadingSpinner.style.display = "none";
-                  resolve();
-                }, 500);
-              }, 800);
-            });
-          }
-        }
-
-        window.addEventListener("resize", () => {
-          handleScreenSize(loadingSpinner, mobileBlocker, breakpoint, false);
-        });
+      // Initial setup on window load
+      window.onload = () => {
+        initUI(keyboardToNoteMap);
         disablePianoInteraction();
+        disableControls();
+        updatePowerButton(isPowerOn);
       };
+
+      //--- POWER BUTTON LOGIC ---//
+      powerBtn.addEventListener("click", async () => {
+        isPowerOn = !isPowerOn;
+
+        if (isPowerOn) {
+          // --- TURNING ON --- //
+          // Start Tone.js and create audio nodes
+          await Tone.start();
+          audioContext = await initAudio();
+
+          // Initialize all interactive modules with the new audio context
+          initPianoInteraction(audioContext.synth, keyboardToNoteMap);
+          initSelfPlayer(
+            audioContext.synth,
+            songSnippets,
+            noteDurations,
+            selfPlayBtn,
+            songSelect
+          );
+
+          // Pass audio context to UI for FX sliders
+          const { synth, reverb, chorus } = audioContext;
+          enableControls(synth, reverb, chorus);
+        } else {
+          // --- TURNING OFF --- //
+          stopSongPlayback();
+          audioContext.synth?.releaseAll();
+          disablePianoInteraction();
+          disableControls();
+        }
+
+        updatePowerButton(isPowerOn);
+      });
     </script>
   </body>
 </html>
