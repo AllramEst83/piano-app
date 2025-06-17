@@ -7,9 +7,17 @@
     <meta name="description" content="A simply piano app using Tone.js" />
     <link rel="icon" type="image/png" href="/assets/icons/icon.png" />
     <link rel="stylesheet" href="css/site.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cookie&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <!-- Initial Loading Spinner -->
     <div
       id="loading-spinner"
       class="fixed inset-0 z-[100] min-h-[100dvh] flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700"
@@ -20,208 +28,683 @@
         style="will-change: transform"
       ></div>
     </div>
-    <!-- Subtle page title -->
-    <div
-      class="fixed top-8 left-1/2 -translate-x-1/2 z-30 select-none text-gray-200 text-xl md:text-2xl font-semibold tracking-wide pointer-events-none"
-      style="text-shadow: 0 2px 8px #222a; margin-top: 0.5rem"
-    >
-      Simply piano
-    </div>
-    <!-- Info button moved outside piano, using info.png icon -->
-    <div class="fixed top-6 right-10 z-30 select-none">
-      <button
-        id="info-btn"
-        title="Show keyboard mapping"
-        class="bg-white/20 hover:bg-white/40 rounded-full w-8 h-8 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white/60 transition"
-        style="padding: 0"
-      >
-        <img
-          src="assets/icons/info.png"
-          alt="info"
-          class="w-5 h-5 pointer-events-none"
-          draggable="false"
-        />
-      </button>
+    <main id="main-content">
       <div
-        id="info-overlay"
-        class="hidden absolute right-0 mt-2 w-72 bg-gray-900/95 text-white text-xs rounded-lg shadow-lg p-4 border border-gray-700"
-        style="backdrop-filter: blur(2px)"
+        id="app-name"
+        class="fixed top-8 left-1/2 -translate-x-1/2 z-30 select-none text-gray-200 text-6xl font-semibold tracking-wide pointer-events-none"
+        style="text-shadow: 0 2px 8px #222a; margin-top: 0.5rem"
       >
-        <div class="font-semibold mb-2">Keyboard layout used:</div>
-        <img
-          src="./assets/piano_docs/32-key-keyboard-1.jpg"
-          alt="Keyboard layout"
-          class="w-full rounded-lg mb-4"
-          draggable="false"
-        />
-        <div class="mb-1">
-          <span class="font-semibold">White Keys:</span>
+        Simply piano
+        <span class="text-3xl align-top font-normal opacity-80">(32 keys)</span>
+      </div>
+      <div class="fixed top-6 left-6 z-50">
+        <button
+          id="power-btn"
+          class="w-16 h-16 rounded-full bg-red-700 ring-2 ring-red-300 shadow-inner transition-all duration-300 text-white font-bold"
+          title="Power"
+        >
+          ●
+        </button>
+      </div>
+      <div class="piano-container">
+        <div class="white-keys">
+          <div class="key white-key" data-note="C3">C3</div>
+          <div class="key white-key" data-note="D3">D3</div>
+          <div class="key white-key" data-note="E3">E3</div>
+          <div class="key white-key" data-note="F3">F3</div>
+          <div class="key white-key" data-note="G3">G3</div>
+          <div class="key white-key" data-note="A3">A3</div>
+          <div class="key white-key" data-note="B3">B3</div>
+
+          <div class="key white-key" data-note="C4">C4</div>
+          <div class="key white-key" data-note="D4">D4</div>
+          <div class="key white-key" data-note="E4">E4</div>
+          <div class="key white-key" data-note="F4">F4</div>
+          <div class="key white-key" data-note="G4">G4</div>
+          <div class="key white-key" data-note="A4">A4</div>
+          <div class="key white-key" data-note="B4">B4</div>
+
+          <div class="key white-key" data-note="C5">C5</div>
+          <div class="key white-key" data-note="D5">D5</div>
+          <div class="key white-key" data-note="E5">E5</div>
+          <div class="key white-key" data-note="F5">F5</div>
+          <div class="key white-key" data-note="G5">G5</div>
         </div>
-        <div class="ml-2 mb-1">
-          C3–B3: <span class="font-mono">A S D F G H J</span>
-        </div>
-        <div class="ml-2 mb-1">
-          C4–B4: <span class="font-mono">K L ; ' \ Z X</span>
-        </div>
-        <div class="ml-2 mb-2">
-          C5–G5: <span class="font-mono">C V B N M</span>
-        </div>
-        <div class="mb-1">
-          <span class="font-semibold">Black Keys:</span>
-        </div>
-        <div class="ml-2 mb-1">
-          C#3–A#3: <span class="font-mono">W E T Y U</span>
-        </div>
-        <div class="ml-2 mb-1">
-          C#4–A#4: <span class="font-mono">O P [ ] `</span>
-        </div>
-        <div class="ml-2 mb-2">
-          C#5–F#5: <span class="font-mono">1 2 3</span>
-        </div>
-        <div class="border-t border-gray-700 pt-2">
-          <div class="font-semibold mb-1">Self Playing Controls:</div>
-          <div class="ml-2">1. Select a song from the dropdown menu</div>
-          <div class="ml-2">2. Click "Self play" to start</div>
-          <div class="ml-2">3. Click "Stop self play" to stop playback</div>
+        <div class="black-keys">
+          <div class="key black-key" data-note="C#3">C#3</div>
+          <div class="key black-key" data-note="D#3">D#3</div>
+          <div class="key black-key" data-note="F#3">F#3</div>
+          <div class="key black-key" data-note="G#3">G#3</div>
+          <div class="key black-key" data-note="A#3">A#3</div>
+
+          <div class="key black-key" data-note="C#4">C#4</div>
+          <div class="key black-key" data-note="D#4">D#4</div>
+          <div class="key black-key" data-note="F#4">F#4</div>
+          <div class="key black-key" data-note="G#4">G#4</div>
+          <div class="key black-key" data-note="A#4">A#4</div>
+
+          <div class="key black-key" data-note="C#5">C#5</div>
+          <div class="key black-key" data-note="D#5">D#5</div>
+          <div class="key black-key" data-note="F#5">F#5</div>
         </div>
       </div>
-    </div>
-    <div class="fixed top-6 left-6 z-50">
-      <button
-        id="power-btn"
-        class="w-16 h-16 rounded-full bg-red-700 ring-2 ring-red-300 shadow-inner transition-all duration-300 text-white font-bold"
-        title="Power"
-      >
-        ●
-      </button>
-    </div>
-    <div class="piano-container">
-      <div class="white-keys">
-        <!-- White Keys (19 total) -->
-        <div class="key white-key" data-note="C3">C3</div>
-        <div class="key white-key" data-note="D3">D3</div>
-        <div class="key white-key" data-note="E3">E3</div>
-        <div class="key white-key" data-note="F3">F3</div>
-        <div class="key white-key" data-note="G3">G3</div>
-        <div class="key white-key" data-note="A3">A3</div>
-        <div class="key white-key" data-note="B3">B3</div>
 
-        <div class="key white-key" data-note="C4">C4</div>
-        <div class="key white-key" data-note="D4">D4</div>
-        <div class="key white-key" data-note="E4">E4</div>
-        <div class="key white-key" data-note="F4">F4</div>
-        <div class="key white-key" data-note="G4">G4</div>
-        <div class="key white-key" data-note="A4">A4</div>
-        <div class="key white-key" data-note="B4">B4</div>
-
-        <div class="key white-key" data-note="C5">C5</div>
-        <div class="key white-key" data-note="D5">D5</div>
-        <div class="key white-key" data-note="E5">E5</div>
-        <div class="key white-key" data-note="F5">F5</div>
-        <div class="key white-key" data-note="G5">G5</div>
-      </div>
-      <div class="black-keys">
-        <!-- Black Keys (13 total) -->
-        <div class="key black-key" data-note="C#3">C#3</div>
-        <div class="key black-key" data-note="D#3">D#3</div>
-        <div class="key black-key" data-note="F#3">F#3</div>
-        <div class="key black-key" data-note="G#3">G#3</div>
-        <div class="key black-key" data-note="A#3">A#3</div>
-
-        <div class="key black-key" data-note="C#4">C#4</div>
-        <div class="key black-key" data-note="D#4">D#4</div>
-        <div class="key black-key" data-note="F#4">F#4</div>
-        <div class="key black-key" data-note="G#4">G#4</div>
-        <div class="key black-key" data-note="A#4">A#4</div>
-
-        <div class="key black-key" data-note="C#5">C#5</div>
-        <div class="key black-key" data-note="D#5">D#5</div>
-        <div class="key black-key" data-note="F#5">F#5</div>
-      </div>
-    </div>
-
-    <!-- Song select and play button -->
-    <div
-      id="control-panel"
-      class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 select-none"
-    >
       <div
-        class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto"
+        id="control-panel-piano"
+        class="fixed bottom-20 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 select-none"
       >
-        <div class="flex flex-col items-center gap-1 w-full sm:w-auto">
-          <div class="flex flex-row gap-3 mb-4">
-            <label class="flex flex-col items-center text-xs text-gray-200">
-              Reverb
-              <input
-                id="reverb-slider"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.3"
-                class="w-40 accent-blue-400"
-              />
-            </label>
-            <label class="flex flex-col items-center text-xs text-gray-200">
-              Chorus
-              <input
-                id="chorus-slider"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="0.5"
-                class="w-40 accent-pink-400"
-              />
-            </label>
-            <label class="flex flex-col items-center text-xs text-gray-200">
-              Pitch
-              <input
-                id="pitch-slider"
-                type="range"
-                min="-1200"
-                max="1200"
-                step="1"
-                value="0"
-                class="w-40 accent-green-400"
-              />
-            </label>
-            <label class="flex flex-col items-center text-xs text-gray-200">
-              Volume
-              <input
-                id="volume-slider"
-                type="range"
-                min="-40"
-                max="0"
-                step="1"
-                value="-8"
-                class="w-40 accent-yellow-400"
-              />
-            </label>
+        <div
+          class="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 w-full sm:w-auto"
+        >
+          <div class="flex flex-col items-center gap-1 w-full sm:w-auto">
+            <div class="flex flex-row items-center gap-3 w-full sm:w-auto">
+              <select
+                id="song-select"
+                class="rounded-lg px-3 py-2 text-base bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/60 shadow w-full sm:w-auto"
+              >
+                <option value="twinkle" class="bg-gray-800 text-white">
+                  Twinkle Twinkle Little Star
+                </option>
+              </select>
+              <button
+                id="self-play-btn"
+                class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60 w-full sm:w-auto"
+              >
+                Start self play
+              </button>
+            </div>
           </div>
-          <div class="flex flex-row items-center gap-3 w-full sm:w-auto">
+        </div>
+      </div>
+
+      <!-- Hint Overlay and links -->
+      <div
+        class="fixed bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-sm font-semibold select-none z-30"
+      >
+        <div
+          class="bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-yellow-400 via-green-400 via-blue-500 to-purple-600 animate-pulse"
+        >
+          <a
+            href="https://tonejs.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="pointer-events-auto"
+          >
+            Created with Tone.js
+          </a>
+          &nbsp;|&nbsp;
+          <a
+            href="https://github.com/AllramEst83"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="pointer-events-auto"
+          >
+            My GitHub
+          </a>
+        </div>
+
+        <!-- Info button - NOT glowing -->
+        <div class="relative ml-2">
+          <button
+            id="info-btn"
+            title="Show keyboard mapping"
+            class="bg-white/20 hover:bg-white/40 rounded-full w-6 h-6 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-white/60 transition"
+            style="padding: 0"
+          >
+            <img
+              src="assets/icons/info.png"
+              alt="info"
+              class="w-4 h-4 pointer-events-none"
+              draggable="false"
+            />
+          </button>
+
+          <div
+            id="info-overlay"
+            class="hidden absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-96 max-h-[80vh] overflow-y-auto bg-gray-900/95 text-white text-sm font-normal rounded-lg shadow-lg p-4 border border-gray-700"
+            style="backdrop-filter: blur(2px)"
+          >
+            <div class="font-semibold mb-2">Hints:</div>
+            <div class="ml-2 mb-3 space-y-1">
+              <div>
+                • Start the piano by clicking the
+                <span class="font-semibold">power button</span> in the top left
+                corner.
+              </div>
+              <div>
+                • Use the
+                <span class="font-semibold">control panel on the right</span> to
+                tweak how the piano sounds in real time.
+              </div>
+              <div>
+                • There is a <span class="font-semibold">reset button</span> for
+                the controls at the bottom of the side panel.
+              </div>
+            </div>
+
+            <div class="font-semibold mb-2">
+              Keyboard layout used (32 keys):
+            </div>
+            <img
+              src="./assets/piano_docs/32-key-keyboard-1.jpg"
+              alt="Keyboard layout"
+              class="w-full rounded-lg mb-4"
+              draggable="false"
+            />
+
+            <div class="mb-1">
+              <span class="font-semibold">White Keys:</span>
+            </div>
+            <div class="ml-2 mb-1">
+              C3–B3: <span class="font-mono">A S D F G H J</span>
+            </div>
+            <div class="ml-2 mb-1">
+              C4–B4: <span class="font-mono">K L ; ' \ Z X</span>
+            </div>
+            <div class="ml-2 mb-2">
+              C5–G5: <span class="font-mono">C V B N M</span>
+            </div>
+
+            <div class="mb-1">
+              <span class="font-semibold">Black Keys:</span>
+            </div>
+            <div class="ml-2 mb-1">
+              C#3–A#3: <span class="font-mono">W E T Y U</span>
+            </div>
+            <div class="ml-2 mb-1">
+              C#4–A#4: <span class="font-mono">O P [ ] `</span>
+            </div>
+            <div class="ml-2 mb-2">
+              C#5–F#5: <span class="font-mono">1 2 3</span>
+            </div>
+
+            <div class="border-t border-gray-700 pt-2">
+              <div class="font-semibold mb-1">Self Playing Controls:</div>
+              <div class="ml-2">1. Select a song from the dropdown menu</div>
+              <div class="ml-2">2. Click "Self play" to start</div>
+              <div class="ml-2">3. Click "Stop self play" to stop playback</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Hint Overlay and links -->
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="glass-effect">
+      <div id="collapse-btn">
+        <svg
+          class="icon-collapse w-6 h-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5"
+          />
+        </svg>
+        <svg
+          class="icon-expand w-6 h-6"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12.75 19.5l-7.5-7.5 7.5-7.5m-6 15l-7.5-7.5 7.5-7.5"
+          />
+        </svg>
+      </div>
+
+      <div id="control-panel-sidebar">
+        <div class="control-group">
+          <h3>Master Controls</h3>
+          <div class="emphasized-control">
+            <label for="master-volume-slider">
+              Master Volume: <span id="volume-value"> -8</span>
+            </label>
+            <input
+              id="master-volume-slider"
+              type="range"
+              min="-60"
+              max="10"
+              step="1"
+              value="-8"
+              class="accent-yellow-400"
+            />
+          </div>
+          <div class="emphasized-control">
+            <label for="bpm-slider">
+              BPM <small>(Beats Per Minute): </small>
+              <span id="bpm-value"> 120</span>
+            </label>
+            <input
+              id="bpm-slider"
+              type="range"
+              min="40"
+              max="240"
+              step="1"
+              value="120"
+              class="accent-fuchsia-400"
+            />
+          </div>
+          <div class="select-control">
+            <label for="osc-type-select">Oscillator Type</label>
             <select
-              id="song-select"
-              class="rounded-lg px-3 py-2 text-base bg-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/60 shadow w-full sm:w-auto"
+              id="osc-type-select"
+              class="bg-gray-700 border-gray-600 rounded-lg"
             >
-              <option value="twinkle" class="bg-gray-800 text-white">
-                Twinkle Twinkle Little Star
-              </option>
+              <option value="sine">Sine (Pure)</option>
+              <option selected value="sine2">Sine + 1 Overtone</option>
+              <option value="sine3">Sine + 2 Overtones</option>
+              <option value="sine4">Sine + 3 Overtones</option>
+              <option value="triangle">Triangle</option>
+              <option value="square">Square</option>
+              <option value="sawtooth">Sawtooth</option>
             </select>
-            <button
-              id="self-play-btn"
-              class="bg-white/20 hover:bg-white/40 text-white rounded-lg px-5 py-2 text-base font-medium shadow transition focus:outline-none focus:ring-2 focus:ring-white/60 w-full sm:w-auto"
-            >
-              Self Play
-            </button>
+          </div>
+          <div class="slider-control">
+            <label for="detune-slider">
+              Detune (cents):
+              <span id="detune-value">0</span>
+            </label>
+            <input
+              id="detune-slider"
+              type="range"
+              min="-100"
+              max="100"
+              step="1"
+              value="0"
+              class="accent-green-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="portamento-slider">
+              Portamento (s):
+              <span id="portamento-value">0</span>
+            </label>
+            <input
+              id="portamento-slider"
+              type="range"
+              min="0"
+              max="0.5"
+              step="0.01"
+              value="0"
+              class="accent-purple-400"
+            />
           </div>
         </div>
+
+        <div class="control-group">
+          <h3>Envelope (ADSR)</h3>
+          <div class="slider-control">
+            <label for="attack-slider">
+              Attack (s):
+              <span id="attact-value">0.005</span>
+            </label>
+            <input
+              id="attack-slider"
+              type="range"
+              min="0.001"
+              max="2"
+              step="0.001"
+              value="0.005"
+              class="accent-red-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="decay-slider">
+              Decay (s):
+              <span id="decay-value">0.4</span>
+            </label>
+            <input
+              id="decay-slider"
+              type="range"
+              min="0.05"
+              max="5"
+              step="0.01"
+              value="0.4"
+              class="accent-orange-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="sustain-slider">
+              Sustain (0-1):
+              <span id="sustain-value">0.2</span>
+            </label>
+            <input
+              id="sustain-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.2"
+              class="accent-lime-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="release-slider">
+              Release (s):
+              <span id="release-value">1.2</span>
+            </label>
+            <input
+              id="release-slider"
+              type="range"
+              min="0"
+              max="5"
+              step="0.05"
+              value="1.2"
+              class="accent-cyan-400"
+            />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <h3>Core Effects</h3>
+          <div class="slider-control">
+            <label for="pitch-shift-slider">
+              Pitch Shift (semitones):
+              <span id="pitch-shift-value">0</span>
+            </label>
+            <input
+              id="pitch-shift-slider"
+              type="range"
+              min="-24"
+              max="24"
+              step="1"
+              value="0"
+              class="accent-yellow-500"
+            />
+          </div>
+
+          <div class="slider-control">
+            <label for="pitch-shift-wet-slider">
+              Pitch Wet:
+              <span id="pitch-shift-wet-value">0.0</span>
+            </label>
+            <input
+              id="pitch-shift-wet-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-yellow-300"
+            />
+          </div>
+
+          <div class="slider-control">
+            <label for="reverb-wet-slider">
+              Reverb Wet:
+              <span id="reverb-wet-value">0.4</span>
+            </label>
+            <input
+              id="reverb-wet-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.4"
+              class="accent-blue-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="reverb-decay-slider"
+              >Reverb Decay (s):
+              <span id="reverb-decay-value">2.5</span>
+            </label>
+            <input
+              id="reverb-decay-slider"
+              type="range"
+              min="0.5"
+              max="10"
+              step="0.1"
+              value="2.5"
+              class="accent-blue-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="reverb-predelay-slider">
+              Reverb PreDelay (s):
+              <span id="reverb-predelay-value">0.02</span>
+            </label>
+            <input
+              id="reverb-predelay-slider"
+              type="range"
+              min="0"
+              max="0.1"
+              step="0.001"
+              value="0.02"
+              class="accent-blue-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="chorus-wet-slider">
+              Chorus Wet:
+              <span id="chorus-wet-value">0</span>
+            </label>
+            <input
+              id="chorus-wet-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-pink-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="chorus-freq-slider">
+              Chorus Freq (Hz):
+              <span id="chorus-freq-value">1.5</span>
+            </label>
+            <input
+              id="chorus-freq-slider"
+              id="chorus-freq-slider"
+              type="range"
+              min="0.1"
+              max="5"
+              step="0.1"
+              value="1.5"
+              class="accent-pink-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="chorus-depth-slider">
+              Chorus Depth (0-1):
+              <span id="chorus-depth-value">0.5</span>
+            </label>
+            <input
+              id="chorus-depth-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.5"
+              class="accent-pink-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="chorus-spread-slider">
+              Chorus Spread (deg):
+              <span id="chorus-spread-value">180</span>
+            </label>
+            <input
+              id="chorus-spread-slider"
+              type="range"
+              min="0"
+              max="180"
+              step="1"
+              value="180"
+              class="accent-pink-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="distortion-amount-slider">
+              Distortion:
+              <span id="distortion-amount-value">0</span>
+            </label>
+            <input
+              id="distortion-amount-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-red-600"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="distortion-wet-slider">
+              Distortion Wet:
+              <span id="distortion-wet-value">0</span>
+            </label>
+            <input
+              id="distortion-wet-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-red-600"
+            />
+          </div>
+          <div class="select-control">
+            <label for="distortion-oversample-select"
+              >Distortion Oversample</label
+            >
+            <select
+              id="distortion-oversample-select"
+              class="bg-gray-700 border-gray-600 rounded-lg"
+            >
+              <option value="none">None</option>
+              <option value="2x">2x</option>
+              <option value="4x">4x</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <h3>Filter</h3>
+          <div class="select-control">
+            <label for="filter-type-select">Filter Type</label>
+            <select
+              id="filter-type-select"
+              class="bg-gray-700 border-gray-600 rounded-lg"
+            >
+              <option value="lowpass">Lowpass</option>
+              <option value="highpass">Highpass</option>
+              <option value="bandpass">Bandpass</option>
+              <option value="notch">Notch</option>
+            </select>
+          </div>
+          <div class="slider-control">
+            <div class="label-row">
+              <label for="filter-freq-slider">Cutoff Freq (Hz):</label>
+              <span id="filter-freq-value">20000</span>
+            </div>
+            <input
+              id="filter-freq-slider"
+              type="range"
+              min="20"
+              max="20000"
+              step="10"
+              value="8000"
+              class="accent-teal-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="filter-q-slider"> Filter Q: </label>
+            <span id="filter-q-value">0.1</span>
+            <input
+              id="filter-q-slider"
+              type="range"
+              min="0.1"
+              max="10"
+              step="0.1"
+              value="0.7"
+              class="accent-teal-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="filter-rolloff-select">Filter Roll-off (dB/oct)</label>
+            <select
+              id="filter-rolloff-select"
+              class="bg-gray-700 border-gray-600 rounded-lg"
+            >
+              <option value="-12">-12 dB/oct</option>
+              <option value="-24">-24 dB/oct</option>
+              <option value="-48">-48 dB/oct</option>
+              <option value="-96">-96 dB/oct</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <h3>Delay</h3>
+          <div class="slider-control">
+            <label for="delay-time-slider">
+              Delay Time (s):
+              <span id="delay-time-value">0</span>
+            </label>
+            <input
+              id="delay-time-slider"
+              type="range"
+              min="0.01"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-indigo-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="delay-feedback-slider">
+              Delay Feedback (0-1):
+              <span id="delay-feedback-value">0</span>
+            </label>
+            <input
+              id="delay-feedback-slider"
+              type="range"
+              min="0"
+              max="0.9"
+              step="0.01"
+              value="0.0"
+              class="accent-indigo-400"
+            />
+          </div>
+          <div class="slider-control">
+            <label for="delay-wet-slider">
+              Delay Wet:
+              <span id="delay-wet-value">0</span>
+            </label>
+            <input
+              id="delay-wet-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.0"
+              class="accent-indigo-400"
+            />
+          </div>
+        </div>
+        <button
+          id="reset-btn"
+          class="w-full mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
+        >
+          Reset All Settings
+        </button>
       </div>
-    </div>
-    <!-- Mobile Blocker -->
+    </aside>
+    <!-- SIDEBAR -->
     <div
       id="mobile-blocker"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700 text-white p-4 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none xl:hidden"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-pink-500 via-purple-600 to-indigo-700 text-white p-4 transition-opacity duration-500 ease-in-out opacity-0 pointer-events-none"
     >
       <div
         class="glass-effect p-8 rounded-2xl max-w-sm w-full text-center flex flex-col items-center justify-center space-y-4"
@@ -250,16 +733,6 @@
       </div>
     </div>
 
-    <div
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 text-sm font-semibold bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-yellow-400 via-green-400 via-blue-500 to-purple-600 animate-pulse select-none pointer-events-none z-20 mb-1"
-    >
-      Created with Tone.js
-    </div>
-
-    <!-- Mobile Blocker -->
-    <!-- Tailwind CSS CDN for easy styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js CDN for audio synthesis -->
     <script src="https://unpkg.com/tone"></script>
     <script type="module">
       import { initAudio } from "./js/audio.js";
@@ -303,11 +776,12 @@
           // Start Tone.js and create audio nodes
           await Tone.start();
           audioContext = await initAudio();
+          const { synth } = audioContext;
 
           // Initialize all interactive modules with the new audio context
-          initPianoInteraction(audioContext.synth, keyboardToNoteMap);
+          initPianoInteraction(synth, keyboardToNoteMap);
           initSelfPlayer(
-            audioContext.synth,
+            synth,
             songSnippets,
             noteDurations,
             selfPlayBtn,
@@ -315,8 +789,7 @@
           );
 
           // Pass audio context to UI for FX sliders
-          const { synth, reverb, chorus } = audioContext;
-          enableControls(synth, reverb, chorus);
+          enableControls(audioContext);
         } else {
           // --- TURNING OFF --- //
           stopSongPlayback();

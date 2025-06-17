@@ -73,8 +73,10 @@ export function stopSongPlayback() {
   // Clear any active visual key states from self-play
   document.querySelectorAll(".key.active").forEach((key) => {
     const note = key.dataset.note;
-    // A bit of a safety check to not interfere with user-pressed keys
-    if (!synth.get(note)?.source.state === "started") {
+    const voice = synth.get(note);
+    const isPlaying = voice?.source?.state === "started";
+
+    if (!isPlaying) {
       key.classList.remove("active");
     }
   });

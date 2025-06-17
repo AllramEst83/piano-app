@@ -7,14 +7,17 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh; /* Full viewport height */
-  background-color: #1a202c; /* Dark background */
+  background-color: #111827; /* Dark background from sidebar */
+  color: #f9fafb; /* Light text from sidebar */
 }
 body:not(.ready) .piano-container,
 body:not(.ready) .fixed:not(#loading-spinner):not(#mobile-blocker) {
   opacity: 0;
   visibility: hidden;
 }
-
+#app-name {
+  font-family: "Cookie", cursive;
+}
 /* Mobile blocker starts hidden but can be shown before ready state */
 #mobile-blocker {
   opacity: 0;
@@ -37,26 +40,196 @@ body.ready .fixed:not(#loading-spinner):not(#mobile-blocker) {
 }
 /* MOBILE BLOCKER */
 .glass-effect {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 20px;
+  background: rgba(31, 41, 55, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
-/* MOBILE BLOCKER */
-/* PIANO CSS */
+
+/* --- MAIN CONTENT & SIDEBAR LAYOUT --- */
+#main-content {
+  padding: 2rem;
+  width: 100%;
+  height: 100vh; /* Make main content occupy viewport */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: calc(340px + 2rem); /* Offset by sidebar width + its margin */
+  transition: margin-right 0.3s ease;
+}
+
+/* Sidebar container - "Window" style */
+#sidebar {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  height: calc(100vh - 2rem); /* Full height minus top/bottom margin */
+  width: 340px; /* A bit wider for better spacing */
+  border-radius: 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  padding-top: 4rem; /* Add padding to top to make space for the collapse button */
+  box-sizing: border-box;
+  transition: width 0.3s ease, padding 0.3s ease;
+  z-index: 50; /* Ensure sidebar is on top */
+}
+
+/* --- Collapsible Sidebar Styles --- */
+#sidebar.collapsed {
+  width: 60px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#sidebar.collapsed #control-panel-sidebar {
+  display: none;
+}
+
+#main-content.sidebar-collapsed {
+  margin-right: calc(60px + 2rem);
+}
+
+/* Collapse Button */
+#collapse-btn {
+  position: absolute;
+  top: 1rem;
+  left: 1.5rem;
+  cursor: pointer;
+  z-index: 10;
+  color: #9ca3af; /* gray-400 */
+  transition: left 0.3s ease;
+}
+
+#sidebar.collapsed #collapse-btn {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#collapse-btn:hover {
+  color: #ffffff;
+}
+
+/* Hide the appropriate icon */
+.icon-expand {
+  display: none;
+}
+#sidebar.collapsed .icon-expand {
+  display: block;
+}
+#sidebar.collapsed .icon-collapse {
+  display: none;
+}
+
+/* --- SIDEBAR CONTROLS --- */
+.control-group {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: rgba(55, 65, 81, 0.6);
+  border-radius: 0.75rem;
+}
+
+.control-group h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #fbbf24; /* Tailwind amber-400 */
+  border-bottom: 1px solid #4b5563;
+  padding-bottom: 0.5rem;
+}
+
+/* Individual control styling */
+.slider-control,
+.select-control {
+  margin-bottom: 1.25rem;
+}
+.slider-control:last-child,
+.select-control:last-child {
+  margin-bottom: 0;
+}
+
+.slider-control label,
+.select-control label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #d1d5db;
+}
+
+/* Style for EMPHASIZED controls */
+.emphasized-control {
+  background-color: rgba(17, 24, 39, 0.5); /* gray-900 with alpha */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #fbbf24; /* amber-400 */
+  margin-bottom: 1rem;
+}
+
+input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  background: #4b5563;
+  border-radius: 4px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 4px solid currentColor;
+}
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 4px solid currentColor;
+}
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  color: #f9fafb;
+  cursor: pointer;
+}
+#sidebar::-webkit-scrollbar {
+  width: 10px;
+}
+#sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+#sidebar::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+#sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #6b7280;
+}
+/* --- PIANO CSS --- */
 .piano-container {
   position: relative;
   display: flex;
   width: 95vw; /* Use most of the viewport width for a wider piano */
   max-width: 1400px; /* Limit max width for very large screens */
-  height: 600px; /* Increased height for a larger piano */
+  height: 450px; /* Adjusted height for better fit */
   background-color: #333;
   border-radius: 1rem;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
   padding: 1.5rem;
   box-sizing: border-box; /* Include padding in width/height */
+  margin: auto; /* Center piano within main content */
 }
 .white-keys {
   display: flex;
@@ -98,6 +271,7 @@ body.ready .fixed:not(#loading-spinner):not(#mobile-blocker) {
   box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.2);
   position: relative;
   height: 100%;
+  color: #000000; /* Color for white key text */
 }
 .white-key.active {
   background: #c8c8c8;
