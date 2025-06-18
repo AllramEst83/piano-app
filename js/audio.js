@@ -75,23 +75,33 @@ export async function initAudio() {
   const synth = new Tone.PolySynth(Tone.Synth, {
     oscillator: { type: DEFAULT_EFFECTS_STATE.oscillator },
     envelope: { ...DEFAULT_EFFECTS_STATE.envelope },
-    volume: DEFAULT_EFFECTS_STATE.masterVolume,
+    volume: DEFAULT_EFFECTS_STATE.synthVolume,
     portamento: DEFAULT_EFFECTS_STATE.portamento,
     detune: DEFAULT_EFFECTS_STATE.detune,
   });
 
-  // Signal Chain
-  const masterGain = new Tone.Volume(-8).toDestination();
-  synth.connect(lowpassFilter);
-  lowpassFilter.connect(highpassFilter);
-  highpassFilter.connect(bandpassFilter);
-  bandpassFilter.connect(notchFilter);
-  notchFilter.connect(distortion);
-  distortion.connect(chorus);
-  chorus.connect(reverb);
-  reverb.connect(delay);
-  delay.connect(pitchShift);
-  pitchShift.connect(masterGain);
+  // Final boost amp
+  const amplifierGain = new Tone.Gain(DEFAULT_EFFECTS_STATE.amplifier.gain);
+
+  // Output volume control
+  const masterVolume = new Tone.Volume(
+    DEFAULT_EFFECTS_STATE.masterVolume
+  ).toDestination();
+
+  // Signal chain
+  synth.chain(
+    lowpassFilter,
+    highpassFilter,
+    bandpassFilter,
+    notchFilter,
+    distortion,
+    chorus,
+    reverb,
+    delay,
+    pitchShift,
+    amplifierGain,
+    masterVolume
+  );
 
   return {
     synth,
@@ -104,5 +114,7 @@ export async function initAudio() {
     notchFilter,
     delay,
     pitchShift,
+    amplifierGain,
+    masterVolume,
   };
 }

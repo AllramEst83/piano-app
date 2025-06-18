@@ -1,5 +1,6 @@
 // js/ui.js
 import { DEFAULT_EFFECTS_STATE } from "./effectsDefaults.js";
+import { resetAmpColoring, setSliderTrackColor } from "./helpers.js";
 
 // --- DOM Elements & Constants ---
 const mobileBlocker = document.getElementById("mobile-blocker");
@@ -10,7 +11,7 @@ const powerBtn = document.getElementById("power-btn");
 
 // Sidebar displays
 const volumeDisplay = document.getElementById("volume-value");
-const bpmDisplay = document.getElementById("bpm-value");
+export const bpmDisplay = document.getElementById("bpm-value");
 const detuneDisplay = document.getElementById("detune-value");
 const portamentoDisplay = document.getElementById("portamento-value");
 const attackDisplay = document.getElementById("attact-value");
@@ -38,6 +39,10 @@ const delayFeedbackDisplay = document.getElementById("delay-feedback-value");
 const delayWetDisplay = document.getElementById("delay-wet-value");
 const filterFreqDisplay = document.getElementById("filter-freq-value");
 const filterQDisplay = document.getElementById("filter-q-value");
+const amplifierGainDisplay = document.getElementById("amplifier-value");
+
+// Controls
+export let bpmSlider = document.getElementById("bpm-slider");
 
 // All Controls
 const allControls = [
@@ -48,7 +53,7 @@ const allControls = [
   document.getElementById("pitch-slider"),
   document.getElementById("volume-slider"),
   document.getElementById("master-volume-slider"),
-  document.getElementById("bpm-slider"),
+  bpmSlider,
   document.getElementById("osc-type-select"),
   document.getElementById("detune-slider"),
   document.getElementById("portamento-slider"),
@@ -76,6 +81,7 @@ const allControls = [
   document.getElementById("delay-wet-slider"),
   document.getElementById("pitch-shift-slider"),
   document.getElementById("pitch-shift-wet-slider"),
+  document.getElementById("amplifier-slider"),
 ];
 
 const breakpoint = 1795;
@@ -142,7 +148,7 @@ function updateFilterLabels(filterType) {
 function updateAllControlsToDefaults() {
   document.getElementById("master-volume-slider").value =
     DEFAULT_EFFECTS_STATE.masterVolume;
-  document.getElementById("bpm-slider").value = DEFAULT_EFFECTS_STATE.bpm;
+  bpmSlider.value = DEFAULT_EFFECTS_STATE.bpm;
   document.getElementById("osc-type-select").value =
     DEFAULT_EFFECTS_STATE.oscillator;
   document.getElementById("detune-slider").value = DEFAULT_EFFECTS_STATE.detune;
@@ -186,6 +192,9 @@ function updateAllControlsToDefaults() {
     DEFAULT_EFFECTS_STATE.delay.feedback;
   document.getElementById("delay-wet-slider").value =
     DEFAULT_EFFECTS_STATE.delay.wet;
+  let ampSlider = document.getElementById("amplifier-slider");
+  ampSlider.value = DEFAULT_EFFECTS_STATE.amplifier.displayGain;
+  resetAmpColoring(ampSlider);
 
   volumeDisplay.textContent = DEFAULT_EFFECTS_STATE.masterVolume;
   bpmDisplay.textContent = DEFAULT_EFFECTS_STATE.bpm;
@@ -209,6 +218,8 @@ function updateAllControlsToDefaults() {
   delayTimeDisplay.textContent = DEFAULT_EFFECTS_STATE.delay.time;
   delayFeedbackDisplay.textContent = DEFAULT_EFFECTS_STATE.delay.feedback;
   delayWetDisplay.textContent = DEFAULT_EFFECTS_STATE.delay.wet;
+  amplifierGainDisplay.textContent =
+    DEFAULT_EFFECTS_STATE.amplifier.displayGain;
 
   // Filter (based on the currently active filter type)
   resetAllFilterControlsToDefault();
@@ -234,10 +245,21 @@ function resetAllFilterControlsToDefault() {
  * @param {object} filterMap - The map of string names to filter objects.
  */
 function resetAudioToDefaults(audioContext, filterMap) {
-  const { synth, pitchShift, reverb, chorus, distortion, delay } = audioContext;
+  const {
+    synth,
+    pitchShift,
+    reverb,
+    chorus,
+    distortion,
+    delay,
+    amplifierGain,
+    masterVolume,
+  } = audioContext;
 
-  synth.volume.value = DEFAULT_EFFECTS_STATE.masterVolume;
+  synth.volume.value = DEFAULT_EFFECTS_STATE.synthVolume;
+  masterVolume.volume.value = DEFAULT_EFFECTS_STATE.masterVolume;
   Tone.Transport.bpm.value = DEFAULT_EFFECTS_STATE.bpm;
+
   synth.set({
     oscillator: { type: DEFAULT_EFFECTS_STATE.oscillator },
     detune: DEFAULT_EFFECTS_STATE.detune,
@@ -250,6 +272,7 @@ function resetAudioToDefaults(audioContext, filterMap) {
   chorus.set({ ...DEFAULT_EFFECTS_STATE.chorus, delayTime: 3.5 }); // delayTime is not settable on the fly, but we reset others
   distortion.set({ ...DEFAULT_EFFECTS_STATE.distortion });
   delay.set({ ...DEFAULT_EFFECTS_STATE.delay });
+  amplifierGain.gain.value = DEFAULT_EFFECTS_STATE.amplifier.gain;
 
   for (const type in filterMap) {
     const filterNode = filterMap[type];
@@ -313,6 +336,7 @@ function initFxSliders(audioContext) {
     bandpassFilter,
     notchFilter,
     delay,
+    amplifierGain,
   } = audioContext;
 
   // *** FIX: Initialize filterState here, AFTER the module has loaded. ***
@@ -346,7 +370,7 @@ function initFxSliders(audioContext) {
       volumeDisplay.textContent = value;
     });
 
-  document.getElementById("bpm-slider").addEventListener("input", (e) => {
+  bpmSlider.addEventListener("input", (e) => {
     const value = Number(e.target.value);
     Tone.Transport.bpm.value = value;
     bpmDisplay.textContent = value;
@@ -501,6 +525,16 @@ function initFxSliders(audioContext) {
     const value = Number(e.target.value);
     delay.wet.value = value;
     delayWetDisplay.textContent = value;
+  });
+
+  document.getElementById("amplifier-slider").addEventListener("input", (e) => {
+    const value = Number(e.target.value);
+    const gain = Math.pow(10, value / 20);
+    amplifierGain.gain.value = gain;
+    amplifierGainDisplay.textContent = value;
+
+    // Change slider color based on dB
+    setSliderTrackColor(e.target, value, e.target.max);
   });
 
   // --- FILTER CONTROLS (stateful per type) ---

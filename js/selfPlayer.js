@@ -1,5 +1,7 @@
 // js/selfPlayer.js
 
+import { bpmSlider, bpmDisplay } from "./ui.js";
+
 // --- MODULE STATE ---
 // These variables are intentionally left empty.
 // They will be populated by initSelfPlayer AFTER the user has clicked the power button.
@@ -24,6 +26,8 @@ function playSongSnippet(songKey) {
 
   const { sequence, bpm = 120 } = songData;
   Tone.Transport.bpm.value = bpm;
+  bpmSlider.value = bpm;
+  bpmDisplay.textContent = bpm;
   let time = 0;
 
   sequence.forEach((noteObj) => {

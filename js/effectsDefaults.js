@@ -5,7 +5,12 @@
  * This is used to initialize the state and to handle the "Reset All" functionality.
  */
 export const DEFAULT_EFFECTS_STATE = {
+  synthVolume: 0,
   masterVolume: -8,
+  amplifier: {
+    gain: 1,
+    displayGain: 0,
+  },
   bpm: 120,
   oscillator: "sine2",
   detune: 0,
