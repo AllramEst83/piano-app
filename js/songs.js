@@ -55,6 +55,43 @@ export const songSnippets = {
       { note: "C4", type: "half", pauseBefore: 0, pauseAfter: 0.5 },
     ],
   },
+  deToJoy: {
+    name: "Ode to Joy",
+    bpm: 120,
+    sequence: [
+      // Part 1
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "F4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "G4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "G4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "F4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+
+      { note: "C4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "C4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "half", pauseBefore: 0, pauseAfter: 0.3 },
+
+      // Part 2
+      { note: "F4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "F4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "C4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "C4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "E4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+
+      { note: "D4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "C4", type: "quarter", pauseBefore: 0, pauseAfter: 0.1 },
+      { note: "C4", type: "half", pauseBefore: 0, pauseAfter: 0.5 },
+    ],
+  },
 };
 
 export const noteDurations = {
